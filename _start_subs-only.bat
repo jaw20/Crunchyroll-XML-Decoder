@@ -1,6 +1,6 @@
 @echo off
 
-rem Crunchyroll Export Script DX - Last Updated 2013/10/15
+rem Crunchyroll Export Script DX - Last Updated 2015/02/09
 rem Removes need for rtmpExplorer
 rem ORIGINAL SOURCE - http://www.darkztar.com/forum/showthread.php?219034-Ripping-videos-amp-subtitles-from-Crunchyroll-%28noob-friendly%29
 

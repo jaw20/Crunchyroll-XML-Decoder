@@ -3,9 +3,9 @@ import re
 import sys
 import urlparse
 from ConfigParser import ConfigParser
+import pickle
 
 import requests
-from ultimate import epnum
 
 
 def config():
@@ -42,20 +42,19 @@ def playerrev(url):
 
 
 def gethtml(url):
+    with open('cookies') as f:
+        cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
+        session = requests.session()
+        session.cookies = cookies
+        del session.cookies['c_visitor']
+        session.cookies['sess_id'] = requests.get('http://www.crunblocker.com/sess_id.php').text
     parts = urlparse.urlsplit(url)
     if not parts.scheme or not parts.netloc:
         print 'Apparently not an URL'
         sys.exit()
     data = {'Referer': 'http://crunchyroll.com/', 'Host': 'www.crunchyroll.com',
             'User-Agent': 'Mozilla/5.0  Windows NT 6.1; rv:26.0 Gecko/20100101 Firefox/26.0'}
-    try:
-        if 'proxy' in sys.argv:
-            proxies = {"http": "127.0.0.1:8118"}
-            res = requests.get(url, params=data, proxies=proxies)
-        else:
-            res = requests.get(url, params=data)
-    except IndexError:
-        res = requests.get(url, params=data)
+    res = session.get(url, params=data)
     return res.text
 
 
@@ -69,23 +68,26 @@ def getxml(req, med_id):
                    'current_page': 'http://www.crunchyroll.com/'}
     else:
         payload = {'req': req, 'media_id': med_id, 'video_format': video_format, 'video_encode_quality': resolution}
-    cookie_jar = cookielib.MozillaCookieJar('cookies.txt').load()
+    with open('cookies') as f:
+        cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
+        session = requests.session()
+        session.cookies = cookies
+        del session.cookies['c_visitor']
+        session.cookies['sess_id'] = requests.get('http://www.crunblocker.com/sess_id.php').text
     headers = {'Referer': 'http://static.ak.crunchyroll.com/flash/' + player_revision + '/StandardVideoPlayer.swf',
                'Host': 'www.crunchyroll.com', 'Content-type': 'application/x-www-form-urlencoded',
                'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; rv:26.0) Gecko/20100101 Firefox/26.0)'}
-    try:
-        if 'proxy' in sys.argv:
-            proxies = {"http": "127.0.0.1:8118"}
-            res = requests.post(url, params=payload, proxies=proxies, cookies=cookie_jar, headers=headers)
-        else:
-            res = requests.post(url, params=payload, cookies=cookie_jar, headers=headers)
-    except IndexError:
-        res = requests.post(url, params=payload, cookies=cookie_jar, headers=headers)
+    res = session.post(url, params=payload, headers=headers)
     return res.text
 
 
 def vidurl(url, season, ep):  # experimental, although it does help if you only know the program page.
     res = gethtml(url)
+    try:
+        print re.findall('<img id=\"footer_country_flag\".+?title=\"(.+?)\"', res, re.DOTALL)[0]
+    except:
+        pass
+    # open('video.html', 'w').write(res.encode('utf-8'))
     slist = re.findall('<a href="#" class="season-dropdown content-menu block text-link strong(?: open| ) '
                        'small-margin-bottom" title="(.+?)"', res)
     if slist:  # multiple seasons
@@ -95,19 +97,20 @@ def vidurl(url, season, ep):  # experimental, although it does help if you only 
             # season = sys.argv[3]
             # ep = raw_input('Episode number: ')
             # ep = sys.argv[2]
-            season = slist[season]
-            return 'http://www.crunchyroll.com/' + re.findall(
+            season = slist[int(season)]
+            # import pdb
+            # pdb.set_trace()
+            return 'http://www.crunchyroll.com' + re.findall(
                 '<a href="(.+episode-0?' + ep + '-(?:.+-)?[0-9]{6})"', res)[slist.index(season)]
         else:
             # print list(reversed(re.findall('<a href=".+episode-(.+?)-',res)))
             # ep = raw_input('Episode number: ')
             # ep = sys.argv[2]
-            return 'http://www.crunchyroll.com/' + re.findall('<a href="(.+episode-0?' + ep + '-(?:.+-)?[0-9]{6})"',
+            return 'http://www.crunchyroll.com' + re.findall('<a href="(.+episode-0?' + ep + '-(?:.+-)?[0-9]{6})"',
                                                               res).pop()
     else:
         # 'http://www.crunchyroll.com/media-'
-        # print re.findall('<a href=".+episode-(.+?)-',res)
+        # print re.findall('<a href=\"(.+?)\" title=\"(.+?)\" class=\"portrait-element block-link titlefix episode\"', res)
         # epnum = raw_input('Episode number: ')
         # epnum = sys.argv[2]
-        return 'http://www.crunchyroll.com/' + re.findall('<a href="(.+episode-0?' + epnum + '-(?:.+-)?[0-9]{6})"',
-                                                          res).pop()
+        return 'http://www.crunchyroll.com' + re.findall('<a href=\"(.+?)\" .+ class=\"portrait-element block-link titlefix episode\"', res)[int(ep)]

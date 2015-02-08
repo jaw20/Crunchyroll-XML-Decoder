@@ -39,7 +39,6 @@ If you don't have a premium account, go and sign up for one now. It's well worth
 # ----------
 
 print 'Booting up...'
-lang = altfuncs.config()
 # http://www.crunchyroll.com/miss-monochrome-the-animation/episode-2-645085
 # http://www.crunchyroll.com/naruto-shippuden/episode-136-the-light-dark-of-the-mangekyo-sharingan-535200
 # page_url = 'http://www.crunchyroll.com/media-535200'
@@ -60,6 +59,8 @@ except ValueError:
         seasonnum, epnum = '', ''
         pass
 
+lang = altfuncs.config()
+
 # ----------
 
 try:
@@ -71,7 +72,7 @@ except ValueError:
     try:
         int(page_url[-6:])
     except ValueError:
-        if 'proxy' in sys.argv and bool(seasonnum):
+        if bool(seasonnum) and bool(epnum):
             page_url = altfuncs.vidurl(page_url, seasonnum, epnum)
         elif bool(epnum):
             page_url = altfuncs.vidurl(page_url, 1, epnum)
@@ -94,9 +95,13 @@ subprocess.call('title ' + title.replace('&', '^&'), shell=True)
 
 media_id = page_url[-6:]
 xmlconfig = BeautifulSoup(altfuncs.getxml('RpcApiVideoPlayer_GetStandardConfig', media_id), 'xml')
-if '<code>4</code>' in xmlconfig:
-    print 'Video not available in your region.'
-    sys.exit()
+
+try:
+    if '4' in xmlconfig.find_all('code')[0]:
+        print xmlconfig.find_all('msg')[0].text
+        sys.exit()
+except IndexError:
+    pass
 vid_id = xmlconfig.find('media_id').string
 
 # ----------
@@ -119,68 +124,83 @@ filen = xmlconfig.find('file').string
 
 # ----------
 
-print 'Downloading video...'
-cmd = '.\\video-engine\\rtmpdump -r "' + url1 + '" -a "' \
-      + url2 + '" -f "WIN 11,8,800,50" -m 15 -W "http://static.ak.crunchyroll.com/flash/' \
-      + player_revision + '/ChromelessPlayerApp.swf" -p "' + page_url + '" -y "' + filen + '" -o "' + title + '.flv"'
-error = subprocess.call(cmd)
+def video():
+    print 'Downloading video...'
+    cmd = '.\\video-engine\\rtmpdump -r "' + url1 + '" -a "' \
+          + url2 + '" -f "WIN 11,8,800,50" -m 15 -W "http://static.ak.crunchyroll.com/flash/' \
+          + player_revision + '/ChromelessPlayerApp.swf" -p "' + page_url + '" -y "' + filen + '" -o "' + title + '.flv"'
+    error = subprocess.call(cmd)
 
-num = 1
-while error != 0 and num < 4:
-    if error == 1:
-        print '\nVideo failed to download, trying again. (' + str(num) + '/3)'
-        error = subprocess.call(cmd)
-        num += 1
-    if error == 2:
-        print '\nVideo download is incomplete, resuming. (' + str(num) + '/3)'
-        error = subprocess.call(cmd + ' -e')
-        num += 1
+    num = 1
+    while error != 0 and num < 4:
+        if error == 1:
+            print '\nVideo failed to download, trying again. (' + str(num) + '/3)'
+            error = subprocess.call(cmd)
+            num += 1
+        if error == 2:
+            print '\nVideo download is incomplete, resuming. (' + str(num) + '/3)'
+            error = subprocess.call(cmd + ' -e')
+            num += 1
 
-if error != 0:
-    print '\nVideo failed to download. Writing error...'
-    if os.path.exists('error.log'):
-        log = open('error.log', 'a')
-    else:
-        log = open('error.log', 'w')
-    log.write(page_url + '\n')
-    log.close()
-    os.remove('.\\' + title + '.flv"')
-    sys.exit()
+    if error != 0:
+        print '\nVideo failed to download. Writing error...'
+        if os.path.exists('error.log'):
+            log = open('error.log', 'a')
+        else:
+            log = open('error.log', 'w')
+        log.write(page_url + '\n')
+        log.close()
+        os.remove('.\\' + title + '.flv"')
+        sys.exit()
 
 # ----------
 
-xmllist = unidecode(altfuncs.getxml('RpcApiSubtitle_GetListing', media_id)).replace('><', '>\n<')
+global sub_id
 
-if '<media_id>None</media_id>' in xmllist:
-    print 'The video has hardcoded subtitles.'
-    hardcoded = True
-    sub_id = False
-else:
-    try:
-        sub_id = re.findall("id=([0-9]+)' title='.+" + lang.replace('(', '\(').replace(')', '\)') + "'", xmllist).pop()
-        hardcoded = False
-    except IndexError:
+def subtitles(title):
+    xmllist = altfuncs.getxml('RpcApiSubtitle_GetListing', media_id)
+    xmllist = unidecode(xmllist).replace('><', '>\n<')
+
+    if '<media_id>None</media_id>' in xmllist:
+        print 'The video has hardcoded subtitles.'
+        global hardcoded
+        hardcoded = True
+        sub_id = False
+    else:
         try:
-            sub_id = re.findall("id=([0-9]+)' title='.+English", xmllist).pop()  # default back to English
-            print 'Language not found, reverting to English'
+            sub_id = re.findall("id=([0-9]+)' title='.+" + lang.replace('(', '\(').replace(')', '\)') + "'", xmllist).pop()
+            global hardcoded
             hardcoded = False
         except IndexError:
-            print 'The video\'s subtitles cannot be found, or are region-locked.'
-            hardcoded = True
-            sub_id = False
+            try:
+                sub_id = re.findall("id=([0-9]+)' title='.+English", xmllist).pop()  # default back to English
+                print 'Language not found, reverting to English'
+                global hardcoded
+                hardcoded = False
+            except IndexError:
+                print 'The video\'s subtitles cannot be found, or are region-locked.'
+                global hardcoded
+                hardcoded = True
+                sub_id = False
 
-if not hardcoded:
-    xmlsub = altfuncs.getxml('RpcApiSubtitle_GetXml', sub_id)
-    formattedSubs = CrunchyDec().returnsubs(xmlsub)
-    try:
-        subfile = open(title + '.ass', 'wb')
-    except IOError:
-        title = title.split(' - ', 1)[0]  # episode name too long, splitting after episode number
-        subfile = open(title + '.ass', 'wb')
-    subfile.write(formattedSubs.encode('utf-8-sig'))
-    subfile.close()
-    shutil.move(title + '.ass', '.\export\\')
-shutil.move(title + '.flv', '.\export\\')
+    if not hardcoded:
+        xmlsub = altfuncs.getxml('RpcApiSubtitle_GetXml', sub_id)
+        formattedSubs = CrunchyDec().returnsubs(xmlsub)
+        try:
+            subfile = open(title + '.ass', 'wb')
+        except IOError:
+            title = title.split(' - ', 1)[0]  # episode name too long, splitting after episode number
+            subfile = open(title + '.ass', 'wb')
+        subfile.write(formattedSubs.encode('utf-8-sig'))
+        subfile.close()
+        shutil.move(title + '.ass', '.\export\\')
+
+if 'subs' in sys.argv:
+    subtitles(title)
+else:
+    video()
+    subtitles(title)
+    shutil.move(title + '.flv', '.\export\\')
 
 print 'Starting mkv merge'
 if hardcoded:

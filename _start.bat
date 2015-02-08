@@ -1,6 +1,6 @@
 @ECHO off
 
-rem Crunchyroll Export Script DX - Last Updated 2014/05/05
+rem Crunchyroll Export Script DX - Last Updated 2015/02/09
 rem Removes need for rtmpExplorer
 rem ORIGINAL SOURCE - http://www.darkztar.com/forum/showthread.php?219034-Ripping-videos-amp-subtitles-from-Crunchyroll-%28noob-friendly%29
 
@@ -44,11 +44,11 @@ GOTO STEP1-GETVIDEO
 :Continue-2
 	if "%2"=="" GOTO Continue-3
 	set epnum=%2
-	".\crunchy-xml-decoder\ultimate.py" %video_url% %epnum%
+	".\crunchy-xml-decoder\ultimate.py" %video_url% %epnum% 1
 	GOTO STEP4
 
 :Continue-3
-	".\crunchy-xml-decoder\ultimate.py" %video_url%
+	".\crunchy-xml-decoder\ultimate.py" %video_url% 1 1
 	GOTO STEP4
 
 
