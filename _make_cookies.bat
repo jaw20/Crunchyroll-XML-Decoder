@@ -17,4 +17,4 @@ del "cookies.txt"
 
 :continue
 pause 
-exit
+rem exit

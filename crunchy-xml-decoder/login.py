@@ -21,10 +21,9 @@ else:
                'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0',
                'Content-Type': 'application/x-www-form-urlencoded'}
 
-    loginurl = 'https://www.crunchyroll.com/?a=formhandler'
     payload = {'formname': 'RpcApiUser_Login', 'fail_url': 'http://www.crunchyroll.com/login',
                'name': username, 'password': password}
-    session.post(loginurl, data=payload, headers=headers)
+    res = session.post('https://www.crunchyroll.com/?a=formhandler', data=payload, headers=headers).text
     for c in session.cookies:
         c.expires = 9999999999  # Saturday, November 20th 2286, 17:46:39 (GMT)
 

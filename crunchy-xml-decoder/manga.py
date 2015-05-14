@@ -17,9 +17,11 @@ from itertools import izip
 
 userdata = shelve.open('shelf', writeback=True)
 
-
+"""
+Start API crap that needs rewriting (stolen from another CR script)
+"""
 def makeapi(method, options):
-    print "Crunchyroll ----> get JSON"
+    # print "Crunchyroll ----> get JSON"
     payload = {'api_ver': userdata['API_VERSION'], 'device_type': userdata['API_DEVICE_TYPE']}
     payload.update(options)
     headers = userdata['API_HEADERS']
@@ -237,7 +239,9 @@ def login():
         del userdata['session_expires']
         print "Crunchyroll ----> Something in the login process went wrong."
         return False
-
+"""
+End API crap
+"""
 
 login()
 
@@ -260,13 +264,24 @@ for i in mangalist:
     except OSError:
         pass
 
-    chapters = len([name for name in os.listdir(manga_name) if name.endswith('.cbz')])
+    files = [name for name in os.listdir(manga_name) if name.endswith('.cbz')]
+    chapters = len(files)
     # print manga_name, i['total_chapters'], chapters
     if i['total_chapters'] <= chapters:
-        print 'No new chapters found for '+i['locale'][userdata['API_LOCALE']]['name']
-        continue
+        series = makeapi('list_chapters', {'series_id': seriesid, 'user_id': userdata['user_id']})
+        maxnum = 0
+        for f in files:
+            f = float(re.findall('\#([.\d]+)', f)[0].rstrip('.'))
+            if f > maxnum:
+                maxnum = f
+        if float(series['chapters'][-1]['number']) == maxnum:
+            print 'No new chapters found for '+i['locale'][userdata['API_LOCALE']]['name']
+            continue
+        # else:
+            # print 'ERROR: '+manga_name+' has '+str(float(series['chapters'][-1]['number']))+' on CR, '+str(maxnum)+' on disk'
 
-    series = makeapi('list_chapters', {'series_id': seriesid, 'user_id': userdata['user_id']})
+    else:
+        series = makeapi('list_chapters', {'series_id': seriesid, 'user_id': userdata['user_id']})
 
     # chapter = input('input chapter number: ')
     # i = series['chapters'][chapter-1]
@@ -281,7 +296,7 @@ for i in mangalist:
             vol_num = u'S'
         vol_num = 'V'+vol_num
 
-        zipname = manga_name+' #'+floatint(i['number'])+'.cbz'
+        # zipname = manga_name+' #'+floatint(i['number'])+'.cbz'
 
         if chap_name != '':
             if chap_name == 'Chapter '+floatint(i['number']):
@@ -294,22 +309,24 @@ for i in mangalist:
         if os.path.exists(manga_name+'\\'+zipname):
             continue
 
+        # print 'WE GOT '+str(i['number'])+' (and high hopes)'
         comic = makeapi('list_chapter', {'chapter_id': str(chapterid),
                                          'session_id': userdata['session_id'], 'auth': userdata['auth_token']})
 
 
         try:
-            cover = requests.get(url=comic['volume']['encrypted_image_url']).content
             covername = manga_name+' '+vol_num+'.jpg'
-            open(covername, 'wb').write(decrypt(cover))
-            shutil.move(covername, manga_name+'\\'+covername)
+            if not os.path.exists(manga_name+'\\'+covername):
+                cover = requests.get(url=comic['volume']['encrypted_image_url']).content
+                open(covername, 'wb').write(decrypt(cover))
+                shutil.move(covername, manga_name+'\\'+covername)
         except TypeError:
             pass
+
+        # print 'STILL GOING? GOOD.'
         print manga_name+': '+floatint(i['number'])+'/'+floatint(series['chapters'][-1]['number'])
 
         myzip = ZipFile(zipname, 'w', zipfile.ZIP_DEFLATED)
-
-
 
         totalp = len(comic['pages'])
         for p in comic['pages']:

@@ -20,7 +20,7 @@ def config():
     resolution = qualities[quality][1]
     global lang
     lang = configr.get('SETTINGS', 'language')
-    langs = {'Espanol_Espana': 'Espanol (Espana)', 'Francais': 'Francais (France)',
+    langs = {'Espanol_Espana': 'Espa.+?ol (Espana)', 'Francais': 'Francais (France)',
              'Portugues': 'Portugues (Brasil)', 'English': 'English|English (US)'}
     lang = langs[lang]
     return lang
@@ -47,7 +47,11 @@ def gethtml(url):
         session = requests.session()
         session.cookies = cookies
         del session.cookies['c_visitor']
-        session.cookies['sess_id'] = requests.get('http://www.crunblocker.com/sess_id.php').text
+        try:
+            session.cookies['sess_id'] = requests.get('http://www.crunblocker.com/sess_id.php').text
+        except:
+            sleep(10) # sleep so we don't overload crunblocker
+            session.cookies['sess_id'] = requests.get('http://www.crunblocker.com/sess_id.php').text
     parts = urlparse.urlsplit(url)
     if not parts.scheme or not parts.netloc:
         print 'Apparently not an URL'

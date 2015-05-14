@@ -39,6 +39,8 @@ def login():
     global userdata
 
     change_language = "0"
+        userdata['username'] = 'username'
+        userdata['password'] = 'password'
 
     if change_language == "0":
         userdata.setdefault('API_LOCALE', "enUS")
