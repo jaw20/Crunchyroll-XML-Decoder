@@ -20,9 +20,8 @@ def config():
     resolution = qualities[quality][1]
     global lang
     lang = configr.get('SETTINGS', 'language')
-    langs = {'Espanol_Espana': 'Espa.+?ol (Espana)', 'Francais': 'Francais (France)',
-             'Portugues': 'Portugues (Brasil)', 'English': 'English|English (US)'}
-    lang = langs[lang]
+    lang = {'Espanol_Espana': 'Espa.+?ol (Espana)', 'Francais': 'Francais (France)', 'Portugues': 'Portugues (Brasil)',
+            'English': 'English|English (US)', 'Espanol': 'Espa.+?ol', 'Turkce':'Turkce', 'Italiano':'Italiano'}[lang]
     return lang
 
 

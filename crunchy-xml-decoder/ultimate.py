@@ -59,7 +59,6 @@ except ValueError:
         seasonnum, epnum = '', ''
         pass
 
-lang = altfuncs.config()
 
 # ----------
 
@@ -83,6 +82,7 @@ subprocess.call('title ' + page_url.replace('http://www.crunchyroll.com/', ''), 
 
 # ----------
 
+lang = altfuncs.config(0)
 player_revision = altfuncs.playerrev(page_url)
 html = altfuncs.gethtml(page_url)
 
@@ -130,6 +130,7 @@ def video():
           + url2 + '" -f "WIN 11,8,800,50" -m 15 -W "http://static.ak.crunchyroll.com/flash/' \
           + player_revision + '/ChromelessPlayerApp.swf" -p "' + page_url + '" -y "' + filen + '" -o "' + title + '.flv"'
     error = subprocess.call(cmd)
+    # error = 0
 
     num = 1
     while error != 0 and num < 4:
@@ -158,28 +159,28 @@ def video():
 global sub_id
 
 def subtitles(title):
+    lang = altfuncs.config(1)
+
     xmllist = altfuncs.getxml('RpcApiSubtitle_GetListing', media_id)
     xmllist = unidecode(xmllist).replace('><', '>\n<')
 
+    global hardcoded
     if '<media_id>None</media_id>' in xmllist:
         print 'The video has hardcoded subtitles.'
-        global hardcoded
         hardcoded = True
         sub_id = False
     else:
         try:
             sub_id = re.findall("id=([0-9]+)' title='.+" + lang.replace('(', '\(').replace(')', '\)') + "'", xmllist).pop()
-            global hardcoded
             hardcoded = False
         except IndexError:
             try:
                 sub_id = re.findall("id=([0-9]+)' title='.+English", xmllist).pop()  # default back to English
                 print 'Language not found, reverting to English'
-                global hardcoded
+                lang = 'English|English (US)'
                 hardcoded = False
             except IndexError:
                 print 'The video\'s subtitles cannot be found, or are region-locked.'
-                global hardcoded
                 hardcoded = True
                 sub_id = False
 
@@ -204,10 +205,13 @@ else:
 
 print 'Starting mkv merge'
 if hardcoded:
-    subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" -a 1 ".\export\\' + title + '.flv"')
+    subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" --language 1:jpn -a 1 -d 0 ' +
+                    '".\export\\' + title + '.flv"')
 else:
-    subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\'
-                    + title + '.mkv" -a 1 ".\export\\' + title + '.flv" ".\export\\' + title + '.ass"')
+    sublang = {'Espa.+?ol (Espana)': 'spa', 'Francais (France)': 'fre', 'Portugues (Brasil)': 'por',
+               'English|English (US)': 'eng', 'Espa.+?ol': 'spa', 'Turkce': 'tur', 'Italiano': 'ita'}[lang]
+    subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" --language 1:jpn -a 1 -d 0 ' +
+                    '".\export\\' + title + '.flv" --language 0:'+ sublang +' -s 0 ".\export\\'+title+'.ass"')
 print 'Merge process complete'
 print
 print '----------'
