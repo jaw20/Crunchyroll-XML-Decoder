@@ -82,7 +82,7 @@ subprocess.call('title ' + page_url.replace('http://www.crunchyroll.com/', ''), 
 
 # ----------
 
-lang = altfuncs.config(0)
+lang = altfuncs.config()
 player_revision = altfuncs.playerrev(page_url)
 html = altfuncs.gethtml(page_url)
 
@@ -159,7 +159,7 @@ def video():
 global sub_id
 
 def subtitles(title):
-    lang = altfuncs.config(1)
+    lang = altfuncs.config()
 
     xmllist = altfuncs.getxml('RpcApiSubtitle_GetListing', media_id)
     xmllist = unidecode(xmllist).replace('><', '>\n<')
