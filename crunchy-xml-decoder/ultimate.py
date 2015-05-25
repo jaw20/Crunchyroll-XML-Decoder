@@ -88,7 +88,7 @@ html = altfuncs.gethtml(page_url)
 
 h = HTMLParser.HTMLParser()
 title = re.findall('<title>(.+?)</title>', html).pop().replace('Crunchyroll - Watch ', '')
-title = h.unescape(unidecode(title)).replace('/', ' - ').replace(':', '-').replace('?', '.').replace('"', '\'').replace('|', '-').strip()
+title = h.unescape(unidecode(title)).replace('/', ' - ').replace(':', '-').replace('?', '.').replace('"', '\'').replace('|', '-').replace('&quot;','\'').strip()
 subprocess.call('title ' + title.replace('&', '^&'), shell=True)
 
 # ----------
