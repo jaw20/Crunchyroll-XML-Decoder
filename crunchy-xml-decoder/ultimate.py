@@ -88,6 +88,8 @@ html = altfuncs.gethtml(page_url)
 
 h = HTMLParser.HTMLParser()
 title = re.findall('<title>(.+?)</title>', html).pop().replace('Crunchyroll - Watch ', '')
+if len(os.getcwd()+'\\export\\'+title+'.flv') > 255:
+	title = re.findall('^(.+?) \- ', title)[0]
 title = h.unescape(unidecode(title)).replace('/', ' - ').replace(':', '-').replace('?', '.').replace('"', '\'').replace('|', '-').replace('&quot;','\'').strip()
 subprocess.call('title ' + title.replace('&', '^&'), shell=True)
 
@@ -180,18 +182,14 @@ def subtitles(title):
                 lang = 'English|English (US)'
                 hardcoded = False
             except IndexError:
-                print 'The video\'s subtitles cannot be found, or are region-locked.'
+                print "The video's subtitles cannot be found, or are region-locked."
                 hardcoded = True
                 sub_id = False
 
     if not hardcoded:
         xmlsub = altfuncs.getxml('RpcApiSubtitle_GetXml', sub_id)
         formattedSubs = CrunchyDec().returnsubs(xmlsub)
-        try:
-            subfile = open(title + '.ass', 'wb')
-        except IOError:
-            title = title.split(' - ', 1)[0]  # episode name too long, splitting after episode number
-            subfile = open(title + '.ass', 'wb')
+        subfile = open(title + '.ass', 'wb')
         subfile.write(formattedSubs.encode('utf-8-sig'))
         subfile.close()
         shutil.move(title + '.ass', '.\export\\')
