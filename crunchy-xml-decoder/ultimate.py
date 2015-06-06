@@ -87,10 +87,21 @@ player_revision = altfuncs.playerrev(page_url)
 html = altfuncs.gethtml(page_url)
 
 h = HTMLParser.HTMLParser()
-title = re.findall('<title>(.+?)</title>', html).pop().replace('Crunchyroll - Watch ', '')
+title = re.findall('<title>(.+?)</title>', html)[0].replace('Crunchyroll - Watch ', '')
 if len(os.getcwd()+'\\export\\'+title+'.flv') > 255:
 	title = re.findall('^(.+?) \- ', title)[0]
-title = h.unescape(unidecode(title)).replace('/', ' - ').replace(':', '-').replace('?', '.').replace('"', '\'').replace('|', '-').replace('&quot;','\'').strip()
+
+# title = h.unescape(unidecode(title)).replace('/', ' - ').replace(':', '-').replace('?', '.').replace('"', "''").replace('|', '-').replace('&quot;',"''").strip()
+
+### Taken from http://stackoverflow.com/questions/6116978/python-replace-multiple-strings ###
+rep = {' / ':' - ', '/':' - ', ':':'-', '?':'.', '"':"''", '|':'-', '&quot;':"''", '*':'.'}
+
+rep = dict((re.escape(k), v) for k, v in rep.iteritems())
+pattern = re.compile("|".join(rep.keys()))
+title = pattern.sub(lambda m: rep[re.escape(m.group(0))], title)
+
+### End stolen code ###
+
 subprocess.call('title ' + title.replace('&', '^&'), shell=True)
 
 # ----------
