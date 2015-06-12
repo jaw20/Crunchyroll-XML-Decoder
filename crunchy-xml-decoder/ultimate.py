@@ -1,4 +1,5 @@
-﻿"""
+﻿#!/usr/bin/python
+"""
 Crunchyroll Export Script DX - Last Updated 2014/07/16
 Removes need for rtmpExplorer
 ORIGINAL SOURCE:
@@ -18,7 +19,6 @@ import altfuncs
 from bs4 import BeautifulSoup
 from crunchyDec import CrunchyDec
 from unidecode import unidecode
-# I hate unicode, bring on python 3.3
 
 # ----------
 
@@ -39,10 +39,6 @@ If you don't have a premium account, go and sign up for one now. It's well worth
 # ----------
 
 print 'Booting up...'
-# http://www.crunchyroll.com/miss-monochrome-the-animation/episode-2-645085
-# http://www.crunchyroll.com/naruto-shippuden/episode-136-the-light-dark-of-the-mangekyo-sharingan-535200
-# page_url = 'http://www.crunchyroll.com/media-535200'
-
 try:
     page_url = sys.argv[1]
 except IndexError:
@@ -94,7 +90,7 @@ if len(os.getcwd()+'\\export\\'+title+'.flv') > 255:
 # title = h.unescape(unidecode(title)).replace('/', ' - ').replace(':', '-').replace('?', '.').replace('"', "''").replace('|', '-').replace('&quot;',"''").strip()
 
 ### Taken from http://stackoverflow.com/questions/6116978/python-replace-multiple-strings ###
-rep = {' / ':' - ', '/':' - ', ':':'-', '?':'.', '"':"''", '|':'-', '&quot;':"''", '*':'.'}
+rep = {' / ':' - ', '/':' - ', ':':'-', '?':'.', '"':"''", '|':'-', '&quot;':"''", '*':'#', u'\u2026':'...'}
 
 rep = dict((re.escape(k), v) for k, v in rep.iteritems())
 pattern = re.compile("|".join(rep.keys()))
@@ -115,6 +111,7 @@ try:
         sys.exit()
 except IndexError:
     pass
+
 vid_id = xmlconfig.find('media_id').string
 
 # ----------
