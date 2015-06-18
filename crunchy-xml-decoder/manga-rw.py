@@ -13,12 +13,12 @@ import requests
 import zipfile
 import shutil
 from zipfile import ZipFile
+from itertools import izip
 
 userdata = shelve.open('login', writeback=True)
 
-
 def makeapi(method, options):
-    print "Crunchyroll ----> get JSON"
+    # print "Crunchyroll ----> get JSON"
     payload = options
     headers = userdata['API_HEADERS']
     url = userdata['API_URL']+'/'+method
@@ -33,6 +33,8 @@ def floatint(num):
     else:
         return str(float(num))
 
+def decrypt(file):
+    return ''.join(chr(ord(c)^66) for c, in izip(file))
 
 def login():
     # Load Persistent Vars
@@ -64,8 +66,8 @@ def login():
         userdata['API_LOCALE'] = "esES"
 
     userdata['API_URL'] = 'http://api-manga.crunchyroll.com'
-    userdata['API_HEADERS'] = {'User-Agent': 'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)',
-                               'Host': 'api-manga.crunchyroll.com', 'Accept-Encoding': 'gzip, deflate',
+    userdata['API_HEADERS'] = {'User-Agent': 'Apache-HttpClient/UNAVAILABLE (java 1.4)',
+                               'Host': 'api-manga.crunchyroll.com', 'Accept-Encoding': 'gzip',
                                'Content-Type': 'application/x-www-form-urlencoded', 'Connection': 'Keep-Alive'}
     userdata['API_VERSION'] = "1"
     userdata['API_DEVICE_TYPE'] = 'com.crunchyroll.manga.flash'

@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 import cookielib
 import re
 import sys
@@ -20,23 +22,20 @@ def config():
     resolution = qualities[quality][1]
     global lang
     lang = configr.get('SETTINGS', 'language')
-    lang = {'Espanol_Espana': 'Espa.+?ol (Espana)', 'Francais': 'Francais (France)', 'Portugues': 'Portugues (Brasil)',
-            'English': 'English|English (US)', 'Espanol': 'Espa.+?ol', 'Turkce':'Turkce', 'Italiano':'Italiano'}[lang]
+    lang = {'Espanol_Espana': u'Español (Espana)', 'Francais': u'Français (France)', 'Portugues': u'Português (Brasil)',
+            'English':u'English|English (US)', 'Espanol':u'Español', 'Turkce':u'Türkçe', 'Italiano':u'Italiano',
+            'Arabic':u'العربية', 'Deutsch':u'Deutsch'}[lang]
     return lang
 
 
 def playerrev(url):
     global player_revision
     try:
-        player_revision = re.findall(r'flash\\/(.+)\\/StandardVideoPlayer.swf', gethtml(url)).pop()
+        player_revision = re.findall(r'flash\\/(.+)\\/StandardVideoPlayer.swf', gethtml(url))[0]
     except IndexError:
         url += '?skip_wall=1'  # perv
         html = gethtml(url)
-        try:
-            player_revision = re.findall(r'flash\\/(.+)\\/StandardVideoPlayer.swf', html).pop()
-        except IndexError:
-            # Just have something here so it can fail. _start_proxy is what you should use anyway
-            player_revision = '20140102185427.932a69b4165d0ca944236b7ca43ae8e5'
+        player_revision = re.findall(r'flash\\/(.+)\\/StandardVideoPlayer.swf', html)[0]
     return player_revision
 
 
@@ -58,6 +57,7 @@ def gethtml(url):
     data = {'Referer': 'http://crunchyroll.com/', 'Host': 'www.crunchyroll.com',
             'User-Agent': 'Mozilla/5.0  Windows NT 6.1; rv:26.0 Gecko/20100101 Firefox/26.0'}
     res = session.get(url, params=data)
+    res.encoding = 'UTF-8'
     return res.text
 
 
@@ -81,6 +81,7 @@ def getxml(req, med_id):
                'Host': 'www.crunchyroll.com', 'Content-type': 'application/x-www-form-urlencoded',
                'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; rv:26.0) Gecko/20100101 Firefox/26.0)'}
     res = session.post(url, params=payload, headers=headers)
+    res.encoding = 'UTF-8'
     return res.text
 
 

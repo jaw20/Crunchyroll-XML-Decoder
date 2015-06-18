@@ -18,7 +18,7 @@ from itertools import izip
 userdata = shelve.open('shelf', writeback=True)
 
 """
-Start API crap that needs rewriting (stolen from another CR script)
+Start API crap that needs rewriting (mostly stolen from another CR script)
 """
 def makeapi(method, options):
     # print "Crunchyroll ----> get JSON"

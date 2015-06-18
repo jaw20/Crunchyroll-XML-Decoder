@@ -181,11 +181,11 @@ def subtitles(title):
         sub_id = False
     else:
         try:
-            sub_id = re.findall("id=([0-9]+)' title='.+" + lang.replace('(', '\(').replace(')', '\)') + "'", xmllist).pop()
+            sub_id = re.findall("id='([0-9]+)' .+? title='.+?" + re.escape(unidecode(lang)) + "'", xmllist)[0]
             hardcoded = False
         except IndexError:
             try:
-                sub_id = re.findall("id=([0-9]+)' title='.+English", xmllist).pop()  # default back to English
+                sub_id = re.findall("id=([0-9]+)' title='.+English", xmllist)[0]  # default back to English
                 print 'Language not found, reverting to English'
                 lang = 'English|English (US)'
                 hardcoded = False
@@ -204,26 +204,31 @@ def subtitles(title):
 
 if 'subs' in sys.argv:
     subtitles(title)
+	subs_only = True
 else:
     video()
     subtitles(title)
     shutil.move(title + '.flv', '.\export\\')
 
-print 'Starting mkv merge'
-if hardcoded:
-    subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" --language 1:jpn -a 1 -d 0 ' +
-                    '".\export\\' + title + '.flv"')
-else:
-    sublang = {'Espa.+?ol (Espana)': 'spa', 'Francais (France)': 'fre', 'Portugues (Brasil)': 'por',
-               'English|English (US)': 'eng', 'Espa.+?ol': 'spa', 'Turkce': 'tur', 'Italiano': 'ita'}[lang]
-    subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" --language 1:jpn -a 1 -d 0 ' +
-                    '".\export\\' + title + '.flv" --language 0:'+ sublang +' -s 0 ".\export\\'+title+'.ass"')
-print 'Merge process complete'
+    print 'Starting mkv merge'
+    if hardcoded:
+        subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" --language 1:jpn -a 1 -d 0 ' +
+                        '".\export\\' + title + '.flv"')
+    else:
+        sublang = {'Espa.+?ol (Espana)': 'spa', 'Francais (France)': 'fre', 'Portugues (Brasil)': 'por',
+                   'English|English (US)': 'eng', 'Espa.+?ol': 'spa', 'Turkce': 'tur', 'Italiano': 'ita', 'l`rby@':'ara'}[lang]
+        subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" --language 1:jpn -a 1 -d 0 ' +
+                        '".\export\\' + title + '.flv" --language 0:'+ sublang +' -s 0 ".\export\\'+title+'.ass"')
+    print 'Merge process complete'
+	subs_only = False
+
 print
 print '----------'
 print
 
 print 'Starting Final Cleanup'
-for i in ['.flv', '.ass']:
-    os.remove('.\export\\' + title + i)
+if not subs_only
+    os.remove('.\export\\' + title + '.flv')
+if not hardcoded:
+    os.remove('.\export\\' + title + '.ass')
 print 'Cleanup Complete'
