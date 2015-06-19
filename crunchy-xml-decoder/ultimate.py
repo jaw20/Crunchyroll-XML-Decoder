@@ -94,7 +94,7 @@ rep = {' / ':' - ', '/':' - ', ':':'-', '?':'.', '"':"''", '|':'-', '&quot;':"''
 
 rep = dict((re.escape(k), v) for k, v in rep.iteritems())
 pattern = re.compile("|".join(rep.keys()))
-title = pattern.sub(lambda m: rep[re.escape(m.group(0))], title)
+title = unidecode(pattern.sub(lambda m: rep[re.escape(m.group(0))], title))
 
 ### End stolen code ###
 
@@ -204,7 +204,8 @@ def subtitles(title):
 
 if 'subs' in sys.argv:
     subtitles(title)
-	subs_only = True
+    subs_only = True
+    hardcoded = True  # bleh
 else:
     video()
     subtitles(title)
@@ -220,15 +221,15 @@ else:
         subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" --language 1:jpn -a 1 -d 0 ' +
                         '".\export\\' + title + '.flv" --language 0:'+ sublang +' -s 0 ".\export\\'+title+'.ass"')
     print 'Merge process complete'
-	subs_only = False
+    subs_only = False
 
 print
 print '----------'
 print
 
 print 'Starting Final Cleanup'
-if not subs_only
+if not subs_only:
     os.remove('.\export\\' + title + '.flv')
-if not hardcoded:
+if not hardcoded or not subs_only:
     os.remove('.\export\\' + title + '.ass')
 print 'Cleanup Complete'
