@@ -1,7 +1,6 @@
-# import lxml
-import hashlib
-import zlib
-import base64
+from hashlib import sha1
+from zlib import decompress
+from base64 import b64decode
 from bs4 import BeautifulSoup
 from Crypto.Cipher import AES
 
@@ -71,9 +70,9 @@ class CrunchyDec:
         # Do some black magic
         eq = (mediaid ^ 88140282) ^ (mediaid ^ 88140282) >> 3 ^ int(88140282 ^ mediaid) * 32
         # Creates a 160-bit SHA1 hash padded to 256-bit using zeroes
-        key = hashlib.sha1('$&).6CXzPHw=2N_+isZK' + str(eq)).digest()+'\x00'*12
-        iv = base64.b64decode(iv)
-        data = base64.b64decode(data)
+        key = sha1('$&).6CXzPHw=2N_+isZK' + str(eq)).digest()+'\x00'*12
+        iv = b64decode(iv)
+        data = b64decode(data)
         cipher = AES.new(key, AES.MODE_CBC, iv)
         decrypteddata = cipher.decrypt(data)
-        return zlib.decompress(decrypteddata)
+        return decompress(decrypteddata)

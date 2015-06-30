@@ -20,6 +20,8 @@ userdata = shelve.open('shelf', writeback=True)
 """
 Start API crap that needs rewriting (mostly stolen from another CR script)
 """
+
+
 def makeapi(method, options):
     # print "Crunchyroll ----> get JSON"
     payload = {'api_ver': userdata['API_VERSION'], 'device_type': userdata['API_DEVICE_TYPE']}
@@ -37,8 +39,9 @@ def floatint(num):
     else:
         return str(float(num))
 
-def decrypt(file):
-    return ''.join(chr(ord(c)^66) for c, in izip(file))
+
+def decrypt(jpeg):
+    return ''.join(chr(ord(b) ^ 66) for b, in izip(jpeg))
 
 
 def login():
@@ -271,48 +274,48 @@ for i in mangalist:
         series = makeapi('list_chapters', {'series_id': seriesid, 'user_id': userdata['user_id']})
         maxnum = 0
         for f in files:
-            f = float(re.findall('\#([.\d]+)', f)[0].rstrip('.'))
+            f = float(re.findall('#([.\d]+)', f)[0].rstrip('.'))
             if f > maxnum:
                 maxnum = f
         if float(series['chapters'][-1]['number']) == maxnum:
             print 'No new chapters found for '+i['locale'][userdata['API_LOCALE']]['name']
             continue
         # else:
-            # print 'ERROR: '+manga_name+' has '+str(float(series['chapters'][-1]['number']))+' on CR, '+str(maxnum)+' on disk'
+            # print 'ERROR: '+manga_name+' has '+str(float(series['chapters'][-1]['number']))+' on CR, '
+            # +str(maxnum)+' on disk'
 
     else:
         series = makeapi('list_chapters', {'series_id': seriesid, 'user_id': userdata['user_id']})
 
     # chapter = input('input chapter number: ')
-    # i = series['chapters'][chapter-1]
-    for i in series['chapters']:
-        chapterid = i['chapter_id']
-        chap_name = i.get('locale', '')
+    # c = series['chapters'][chapter-1]
+    for c in series['chapters']:
+        chapterid = c['chapter_id']
+        chap_name = c.get('locale', '')
         if chap_name:
             chap_name = chap_name[userdata['API_LOCALE']]['name'].replace('/', ' - ')\
                 .replace(':', '-').replace('?', '.').replace('"', '\'').strip()
-        vol_num = i['volume_number']
-        if vol_num == u'0' or vol_num == None:
+        vol_num = c['volume_number']
+        if vol_num == u'0' or vol_num is None:
             vol_num = u'S'
         vol_num = 'V'+vol_num
 
         # zipname = manga_name+' #'+floatint(i['number'])+'.cbz'
 
         if chap_name != '':
-            if chap_name == 'Chapter '+floatint(i['number']):
-                zipname = manga_name+' '+vol_num+' #'+floatint(i['number'])+'.cbz'
+            if chap_name == 'Chapter '+floatint(c['number']):
+                zipname = manga_name+' '+vol_num+' #'+floatint(c['number'])+'.cbz'
             else:
-                zipname = manga_name+' '+vol_num+' #'+floatint(i['number'])+' - '+chap_name+'.cbz'
+                zipname = manga_name+' '+vol_num+' #'+floatint(c['number'])+' - '+chap_name+'.cbz'
         else:
-            zipname = manga_name+' '+vol_num+' #'+floatint(i['number'])+'.cbz'
+            zipname = manga_name+' '+vol_num+' #'+floatint(c['number'])+'.cbz'
 
         if os.path.exists(manga_name+'\\'+zipname):
             continue
 
-        # print 'WE GOT '+str(i['number'])+' (and high hopes)'
+        # print 'WE GOT '+str(c['number'])+' (and high hopes)'
         comic = makeapi('list_chapter', {'chapter_id': str(chapterid),
                                          'session_id': userdata['session_id'], 'auth': userdata['auth_token']})
-
 
         try:
             covername = manga_name+' '+vol_num+'.jpg'
@@ -324,7 +327,7 @@ for i in mangalist:
             pass
 
         # print 'STILL GOING? GOOD.'
-        print manga_name+': '+floatint(i['number'])+'/'+floatint(series['chapters'][-1]['number'])
+        print manga_name+': '+floatint(c['number'])+'/'+floatint(series['chapters'][-1]['number'])
 
         myzip = ZipFile(zipname, 'w', zipfile.ZIP_DEFLATED)
 
@@ -337,7 +340,7 @@ for i in mangalist:
             name = 'P'+p['number'].zfill(4)+'.jpg'
             myzip.writestr(name, decrypt(image))
             status = 'Downloaded page '+p['number']+'/'+str(totalp)
-            status = status + chr(8)*(len(status)+1)
+            status += chr(8) * (len(status) + 1)
             print status,
         myzip.close()
 

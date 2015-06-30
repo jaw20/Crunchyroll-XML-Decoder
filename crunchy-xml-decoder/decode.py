@@ -11,7 +11,6 @@ Thanks!
 import os
 import re
 import shutil
-import subprocess
 import sys
 import HTMLParser
 
@@ -36,14 +35,14 @@ html = altfuncs.gethtml(page_url)
 h = HTMLParser.HTMLParser()
 title = re.findall('<title>(.+?)</title>', html)[0].replace('Crunchyroll - Watch ', '')
 if len(os.getcwd()+'\\export\\'+title+'.ass') > 255:
-	title = re.findall('^(.+?) \- ', title)[0]
+    title = re.findall('^(.+?) \- ', title)[0]
 
 ### Taken from http://stackoverflow.com/questions/6116978/python-replace-multiple-strings ###
-rep = {' / ':' - ', '/':' - ', ':':'-', '?':'.', '"':"''", '|':'-', '&quot;':"''", '*':'.'}
+rep = {' / ': ' - ', '/': ' - ', ':': '-', '?': '.', '"': "''", '|': '-', '&quot;': "''", '*': '#', u'\u2026': '...'}
 
 rep = dict((re.escape(k), v) for k, v in rep.iteritems())
 pattern = re.compile("|".join(rep.keys()))
-title = pattern.sub(lambda m: rep[re.escape(m.group(0))], title)
+title = unidecode(pattern.sub(lambda m: rep[re.escape(m.group(0))], title))
 
 ### End stolen code ###
 
@@ -69,11 +68,11 @@ if '<media_id>None</media_id>' in xmllist:
     sub_id = False
 else:
     try:
-        sub_id = re.findall("id=([0-9]+)' title='.+" + lang.replace('(', '\(').replace(')', '\)') + "'", xmllist).pop()
+        sub_id = re.findall("id='([0-9]+)' .+? title='.+?" + re.escape(unidecode(lang)) + "'", xmllist)[0]
         hardcoded = False
     except IndexError:
         try:
-            sub_id = re.findall("id=([0-9]+)' title='.+English", xmllist).pop()  # default back to English
+            sub_id = re.findall("id=([0-9]+)' title='.+English", xmllist)[0]  # default back to English
             print 'Language not found, reverting to English'
             lang = 'English|English (US)'
             hardcoded = False

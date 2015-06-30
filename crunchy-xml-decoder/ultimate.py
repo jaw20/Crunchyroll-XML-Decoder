@@ -1,4 +1,5 @@
 ﻿#!/usr/bin/python
+# -*- coding: utf-8 -*-
 """
 Crunchyroll Export Script DX - Last Updated 2014/07/16
 Removes need for rtmpExplorer
@@ -6,7 +7,6 @@ ORIGINAL SOURCE:
   http://www.darkztar.com/forum/showthread.php?219034-Ripping-videos-amp-subtitles-from-Crunchyroll-%28noob-friendly%29
 """
 
-# -*- coding: utf-8 -*-
 # import lxml
 import os
 import re
@@ -85,12 +85,13 @@ html = altfuncs.gethtml(page_url)
 h = HTMLParser.HTMLParser()
 title = re.findall('<title>(.+?)</title>', html)[0].replace('Crunchyroll - Watch ', '')
 if len(os.getcwd()+'\\export\\'+title+'.flv') > 255:
-	title = re.findall('^(.+?) \- ', title)[0]
+    title = re.findall('^(.+?) \- ', title)[0]
 
-# title = h.unescape(unidecode(title)).replace('/', ' - ').replace(':', '-').replace('?', '.').replace('"', "''").replace('|', '-').replace('&quot;',"''").strip()
+# title = h.unescape(unidecode(title)).replace('/', ' - ').replace(':', '-').
+# replace('?', '.').replace('"', "''").replace('|', '-').replace('&quot;',"''").strip()
 
 ### Taken from http://stackoverflow.com/questions/6116978/python-replace-multiple-strings ###
-rep = {' / ':' - ', '/':' - ', ':':'-', '?':'.', '"':"''", '|':'-', '&quot;':"''", '*':'#', u'\u2026':'...'}
+rep = {' / ': ' - ', '/': ' - ', ':': '-', '?': '.', '"': "''", '|': '-', '&quot;': "''", '*': '#', u'\u2026': '...'}
 
 rep = dict((re.escape(k), v) for k, v in rep.iteritems())
 pattern = re.compile("|".join(rep.keys()))
@@ -134,11 +135,13 @@ filen = xmlconfig.find('file').string
 
 # ----------
 
+
 def video():
     print 'Downloading video...'
     cmd = '.\\video-engine\\rtmpdump -r "' + url1 + '" -a "' \
           + url2 + '" -f "WIN 11,8,800,50" -m 15 -W "http://static.ak.crunchyroll.com/flash/' \
-          + player_revision + '/ChromelessPlayerApp.swf" -p "' + page_url + '" -y "' + filen + '" -o "' + title + '.flv"'
+          + player_revision + '/ChromelessPlayerApp.swf" -p "' + page_url + '" -y "' + filen + \
+          '" -o "' + title + '.flv"'
     error = subprocess.call(cmd)
     # error = 0
 
@@ -166,10 +169,9 @@ def video():
 
 # ----------
 
-global sub_id
 
-def subtitles(title):
-    lang = altfuncs.config()
+def subtitles(eptitle):
+    global sub_id
 
     xmllist = altfuncs.getxml('RpcApiSubtitle_GetListing', media_id)
     xmllist = unidecode(xmllist).replace('><', '>\n<')
@@ -187,7 +189,6 @@ def subtitles(title):
             try:
                 sub_id = re.findall("id=([0-9]+)' title='.+English", xmllist)[0]  # default back to English
                 print 'Language not found, reverting to English'
-                lang = 'English|English (US)'
                 hardcoded = False
             except IndexError:
                 print "The video's subtitles cannot be found, or are region-locked."
@@ -196,11 +197,11 @@ def subtitles(title):
 
     if not hardcoded:
         xmlsub = altfuncs.getxml('RpcApiSubtitle_GetXml', sub_id)
-        formattedSubs = CrunchyDec().returnsubs(xmlsub)
-        subfile = open(title + '.ass', 'wb')
-        subfile.write(formattedSubs.encode('utf-8-sig'))
+        formattedsubs = CrunchyDec().returnsubs(xmlsub)
+        subfile = open(eptitle + '.ass', 'wb')
+        subfile.write(formattedsubs.encode('utf-8-sig'))
         subfile.close()
-        shutil.move(title + '.ass', '.\export\\')
+        shutil.move(eptitle + '.ass', '.\export\\')
 
 if 'subs' in sys.argv:
     subtitles(title)
@@ -216,10 +217,11 @@ else:
         subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" --language 1:jpn -a 1 -d 0 ' +
                         '".\export\\' + title + '.flv"')
     else:
-        sublang = {'Espa.+?ol (Espana)': 'spa', 'Francais (France)': 'fre', 'Portugues (Brasil)': 'por',
-                   'English|English (US)': 'eng', 'Espa.+?ol': 'spa', 'Turkce': 'tur', 'Italiano': 'ita', 'l`rby@':'ara'}[lang]
+        sublang = {u'Español (Espana)': 'spa', u'Français (France)': 'fre', u'Português (Brasil)': 'por',
+                   u'English|English (US)': 'eng', u'Español': 'spa', u'Türkçe': 'tur', u'Italiano': 'ita',
+                   u'العربية': 'ara', u'Deutsch': 'deu'}[lang]
         subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" --language 1:jpn -a 1 -d 0 ' +
-                        '".\export\\' + title + '.flv" --language 0:'+ sublang +' -s 0 ".\export\\'+title+'.ass"')
+                        '".\export\\' + title + '.flv" --language 0:' + sublang + ' -s 0 ".\export\\'+title+'.ass"')
     print 'Merge process complete'
     subs_only = False
 

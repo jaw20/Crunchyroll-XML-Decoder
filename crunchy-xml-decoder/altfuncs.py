@@ -1,8 +1,8 @@
 ﻿#!/usr/bin/python
 # -*- coding: utf-8 -*-
-import cookielib
 import re
 import sys
+from time import sleep
 import urlparse
 from ConfigParser import ConfigParser
 import pickle
@@ -23,8 +23,8 @@ def config():
     global lang
     lang = configr.get('SETTINGS', 'language')
     lang = {'Espanol_Espana': u'Español (Espana)', 'Francais': u'Français (France)', 'Portugues': u'Português (Brasil)',
-            'English':u'English|English (US)', 'Espanol':u'Español', 'Turkce':u'Türkçe', 'Italiano':u'Italiano',
-            'Arabic':u'العربية', 'Deutsch':u'Deutsch'}[lang]
+            'English': u'English|English (US)', 'Espanol': u'Español', 'Turkce': u'Türkçe', 'Italiano': u'Italiano',
+            'Arabic': u'العربية', 'Deutsch': u'Deutsch'}[lang]
     return lang
 
 
@@ -48,7 +48,7 @@ def gethtml(url):
         try:
             session.cookies['sess_id'] = requests.get('http://www.crunblocker.com/sess_id.php').text
         except:
-            sleep(10) # sleep so we don't overload crunblocker
+            sleep(10)  # sleep so we don't overload crunblocker
             session.cookies['sess_id'] = requests.get('http://www.crunblocker.com/sess_id.php').text
     parts = urlparse.urlsplit(url)
     if not parts.scheme or not parts.netloc:
@@ -111,10 +111,12 @@ def vidurl(url, season, ep):  # experimental, although it does help if you only 
             # ep = raw_input('Episode number: ')
             # ep = sys.argv[2]
             return 'http://www.crunchyroll.com' + re.findall('<a href="(.+episode-0?' + ep + '-(?:.+-)?[0-9]{6})"',
-                                                              res).pop()
+                                                             res).pop()
     else:
         # 'http://www.crunchyroll.com/media-'
-        # print re.findall('<a href=\"(.+?)\" title=\"(.+?)\" class=\"portrait-element block-link titlefix episode\"', res)
+        # print re.findall('<a href=\"(.+?)\" title=\"(.+?)\"
+        #  class=\"portrait-element block-link titlefix episode\"', res)
         # epnum = raw_input('Episode number: ')
         # epnum = sys.argv[2]
-        return 'http://www.crunchyroll.com' + re.findall('<a href=\"(.+?)\" .+ class=\"portrait-element block-link titlefix episode\"', res)[int(ep)]
+        return 'http://www.crunchyroll.com' + \
+               re.findall('<a href=\"(.+?)\" .+ class=\"portrait-element block-link titlefix episode\"', res)[int(ep)]

@@ -1,5 +1,3 @@
-import cookielib
-import fileinput
 import sys
 import re
 import requests
