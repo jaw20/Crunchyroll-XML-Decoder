@@ -91,7 +91,7 @@ if len(os.getcwd()+'\\export\\'+title+'.flv') > 255:
 # replace('?', '.').replace('"', "''").replace('|', '-').replace('&quot;',"''").strip()
 
 ### Taken from http://stackoverflow.com/questions/6116978/python-replace-multiple-strings ###
-rep = {' / ': ' - ', '/': ' - ', ':': '-', '?': '.', '"': "''", '|': '-', '&quot;': "''", '*': '#', u'\u2026': '...'}
+rep = {' / ': ' - ', '/': ' - ', ':': '-', '?': '.', '"': "''", '|': '-', '&quot;': "''", 'a*G':'a G', '*': '#', u'\u2026': '...'}
 
 rep = dict((re.escape(k), v) for k, v in rep.iteritems())
 pattern = re.compile("|".join(rep.keys()))
@@ -201,7 +201,7 @@ def subtitles(eptitle):
         subfile = open(eptitle + '.ass', 'wb')
         subfile.write(formattedsubs.encode('utf-8-sig'))
         subfile.close()
-        shutil.move(eptitle + '.ass', '.\export\\')
+        shutil.move(eptitle + '.ass', os.path.join(os.getcwd(), 'export', ''))
 
 if 'subs' in sys.argv:
     subtitles(title)
@@ -210,7 +210,7 @@ if 'subs' in sys.argv:
 else:
     video()
     subtitles(title)
-    shutil.move(title + '.flv', '.\export\\')
+    shutil.move(title + '.flv', os.path.join(os.getcwd(), 'export', ''))
 
     print 'Starting mkv merge'
     if hardcoded:
@@ -231,7 +231,7 @@ print
 
 print 'Starting Final Cleanup'
 if not subs_only:
-    os.remove('.\export\\' + title + '.flv')
+    os.remove(os.path.join(os.getcwd(), 'export', '') + title + '.flv')
 if not hardcoded or not subs_only:
-    os.remove('.\export\\' + title + '.ass')
+    os.remove(os.path.join(os.getcwd(), 'export', '') + title + '.ass')
 print 'Cleanup Complete'

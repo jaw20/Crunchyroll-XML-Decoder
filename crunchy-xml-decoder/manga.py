@@ -14,6 +14,7 @@ import zipfile
 import shutil
 from zipfile import ZipFile
 from itertools import izip
+# from time import sleep
 
 userdata = shelve.open('shelf', writeback=True)
 
@@ -24,11 +25,15 @@ Start API crap that needs rewriting (mostly stolen from another CR script)
 
 def makeapi(method, options):
     # print "Crunchyroll ----> get JSON"
-    payload = {'api_ver': userdata['API_VERSION'], 'device_type': userdata['API_DEVICE_TYPE']}
+    if method == 'list_chapter':
+        payload = {'api_ver': userdata['API_VERSION'], 'format': 'json'}
+    else:
+        payload = {'api_ver': userdata['API_VERSION'], 'device_type': userdata['API_DEVICE_TYPE'], 'format': 'json'}
     payload.update(options)
     headers = userdata['API_HEADERS']
     url = userdata['API_URL']+'/'+method
-    req = requests.post(url, params=payload, headers=headers)
+    global session
+    req = session.get(url, params=payload, headers=headers)
     json_data = req.text
     return json.loads(json_data)
 
@@ -79,15 +84,24 @@ def login():
             userdata["device_id"] = device_id
             print 'Crunchyroll ----> New device_id created. New device_id is: ' + str(device_id)
         userdata['API_URL'] = 'http://api-manga.crunchyroll.com'
-        userdata['API_HEADERS'] = {'User-Agent': 'Apache-HttpClient/UNAVAILABLE (java 1.4)',
-                                   'Host': 'api-manga.crunchyroll.com', 'Accept-Encoding': 'gzip',
-                                   'Content-Type': 'application/x-www-form-urlencoded', 'Connection': 'Keep-Alive'}
-        userdata['API_VERSION'] = "1.0"
-        userdata['API_ACCESS_TOKEN'] = 'FLpcfZH4CbW4muO'  # formerly '1M8BbXptBS4VhMP'
-        userdata['API_DEVICE_TYPE'] = 'com.crunchyroll.manga.android'  # formerly 'com.crunchyroll.manga.crunchyroid'
+        userdata['API_HEADERS'] = {'User-Agent': 'Manga/2.1.2.2 (iPod touch; iOS 6.1.6; Scale/2.00)',
+                                   'Host': 'api-manga.crunchyroll.com', 'Accept-Encoding': 'gzip, deflate',
+                                   'Content-Type': 'application/x-www-form-urlencoded', 'Connection': 'keep-alive'}
+        ### Android ###
+        # userdata['API_VERSION'] = "1.0"
+        # userdata['API_ACCESS_TOKEN'] = 'FLpcfZH4CbW4muO'  # formerly '1M8BbXptBS4VhMP'
+        # userdata['API_DEVICE_TYPE'] = 'com.crunchyroll.manga.android'  # formerly 'com.crunchyroll.manga.crunchyroid'
+
+        ### Flash ###
         # userdata['API_VERSION'] = "1"
         # userdata['API_ACCESS_TOKEN'] # none, refactor code for this
         # userdata['API_DEVICE_TYPE'] = 'com.crunchyroll.manga.flash'
+
+        ### iOS ###
+        userdata['API_VERSION'] = "1.0"
+        userdata['API_ACCESS_TOKEN'] = 'Ge9rurkgXzzmzZQ'
+        userdata['API_DEVICE_TYPE'] = 'com.crunchyroll.manga.iphone'
+
         userdata.setdefault('premium_type', 'UNKNOWN')
         current_datetime = datetime.datetime.now(dateutil.tz.tzutc())
 
@@ -133,7 +147,8 @@ def login():
                                                'access_token': userdata['API_ACCESS_TOKEN']})
         # print request
         if request['error'] is False:
-            userdata['session_id'] = requests.get('http://www.crunblocker.com/sess_id.php').text
+            # userdata['session_id'] = requests.get('http://www.crunblocker.com/sess_id.php').text
+            userdata['session_id'] = request['data']['session_id']
             userdata['session_expires'] = (current_datetime + dateutil.relativedelta.relativedelta(hours=+4))
             userdata['test_session'] = current_datetime
             print "Crunchyroll ----> New session created! Session ID is: " + str(userdata['session_id'])
@@ -184,7 +199,8 @@ def login():
                                                'auth': userdata['auth_token']})
         try:
             if request['error'] is False:
-                userdata['session_id'] = requests.get('http://www.crunblocker.com/sess_id.php').text
+                # userdata['session_id'] = requests.get('http://www.crunblocker.com/sess_id.php').text
+                userdata['session_id'] = request['data']['session_id']
                 userdata['auth_expires'] = dateutil.parser.parse(request['data']['expires'])
                 userdata['premium_type'] = 'free'\
                     if not request['data']['user']['premium'] else request['data']['user']['premium']
@@ -246,6 +262,8 @@ def login():
 End API crap
 """
 
+session = requests.session()
+
 login()
 
 # seriesid = input('input series id: ')
@@ -290,7 +308,7 @@ for i in mangalist:
     # chapter = input('input chapter number: ')
     # c = series['chapters'][chapter-1]
     for c in series['chapters']:
-        chapterid = c['chapter_id']
+        # chapterid = c['chapter_id']
         chap_name = c.get('locale', '')
         if chap_name:
             chap_name = chap_name[userdata['API_LOCALE']]['name'].replace('/', ' - ')\
@@ -302,25 +320,29 @@ for i in mangalist:
 
         # zipname = manga_name+' #'+floatint(i['number'])+'.cbz'
 
+        cnum = floatint(c['number'])
+
         if chap_name != '':
             if chap_name == 'Chapter '+floatint(c['number']):
-                zipname = manga_name+' '+vol_num+' #'+floatint(c['number'])+'.cbz'
+                zipname = manga_name+' '+vol_num+' #'+cnum+'.cbz'
             else:
-                zipname = manga_name+' '+vol_num+' #'+floatint(c['number'])+' - '+chap_name+'.cbz'
+                zipname = manga_name+' '+vol_num+' #'+cnum+' - '+chap_name+'.cbz'
         else:
-            zipname = manga_name+' '+vol_num+' #'+floatint(c['number'])+'.cbz'
+            zipname = manga_name+' '+vol_num+' #'+cnum+'.cbz'
 
         if os.path.exists(manga_name+'\\'+zipname):
             continue
 
         # print 'WE GOT '+str(c['number'])+' (and high hopes)'
-        comic = makeapi('list_chapter', {'chapter_id': str(chapterid),
+        # comic = makeapi('list_chapter', {'chapter_id': str(chapterid),
+                                         # 'session_id': userdata['session_id'], 'auth': userdata['auth_token']})
+        comic = makeapi('list_chapter', {'series_id': seriesid, 'chapter_num': cnum,
                                          'session_id': userdata['session_id'], 'auth': userdata['auth_token']})
 
         try:
             covername = manga_name+' '+vol_num+'.jpg'
             if not os.path.exists(manga_name+'\\'+covername):
-                cover = requests.get(url=comic['volume']['encrypted_image_url']).content
+                cover = session.get(url=comic['volume']['encrypted_image_url']).content
                 open(covername, 'wb').write(decrypt(cover))
                 shutil.move(covername, manga_name+'\\'+covername)
         except TypeError:
@@ -332,16 +354,19 @@ for i in mangalist:
         myzip = ZipFile(zipname, 'w', zipfile.ZIP_DEFLATED)
 
         totalp = len(comic['pages'])
+        ind = 1
         for p in comic['pages']:
             if not p['locale'] or not p['locale'][userdata['API_LOCALE']]['encrypted_composed_image_url']:
-                image = requests.get(url=p['image_url']).content
+                image = session.get(url=p['image_url'], timeout=16).content
             else:
-                image = requests.get(url=p['locale'][userdata['API_LOCALE']]['encrypted_composed_image_url']).content
-            name = 'P'+p['number'].zfill(4)+'.jpg'
+                image = session.get(url=p['locale'][userdata['API_LOCALE']]['encrypted_composed_image_url'], timeout=16).content
+            name = 'P'+str(ind).zfill(4)+'.jpg'
             myzip.writestr(name, decrypt(image))
-            status = 'Downloaded page '+p['number']+'/'+str(totalp)
+            status = 'Downloaded page '+str(ind)+'/'+str(totalp)
             status += chr(8) * (len(status) + 1)
             print status,
+            ind += 1
+            # sleep(0.5)
         myzip.close()
 
         shutil.move(zipname, manga_name+'\\'+zipname)
