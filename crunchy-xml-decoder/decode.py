@@ -1,4 +1,5 @@
 ﻿#!/usr/bin/python
+# -*- coding: utf-8 -*-
 """
 Subtitle Decoder
 Uses some library files from
@@ -6,7 +7,6 @@ http://xbmc-addon-repository.googlecode.com
 Thanks!
 """
 
-# -*- coding: utf-8 -*-
 # import lxml
 import os
 import re
@@ -28,7 +28,7 @@ try:
 except IndexError:
     page_url = raw_input('Please enter Crunchyroll video URL:\n')
 
-lang = altfuncs.config()
+lang1, lang2 = altfuncs.config()
 player_revision = altfuncs.playerrev(page_url)
 html = altfuncs.gethtml(page_url)
 
@@ -38,7 +38,7 @@ if len(os.getcwd()+'\\export\\'+title+'.ass') > 255:
     title = re.findall('^(.+?) \- ', title)[0]
 
 ### Taken from http://stackoverflow.com/questions/6116978/python-replace-multiple-strings ###
-rep = {' / ': ' - ', '/': ' - ', ':': '-', '?': '.', '"': "''", '|': '-', '&quot;': "''", '*': '#', u'\u2026': '...'}
+rep = {' / ': ' - ', '/': ' - ', ':': '-', '?': '.', '"': "''", '|': '-', '&quot;': "''", 'a*G':'a G', '*': '#', u'\u2026': '...'}
 
 rep = dict((re.escape(k), v) for k, v in rep.iteritems())
 pattern = re.compile("|".join(rep.keys()))
@@ -67,26 +67,33 @@ if '<media_id>None</media_id>' in xmllist:
     hardcoded = True
     sub_id = False
 else:
-    try:
-        sub_id = re.findall("id='([0-9]+)' .+? title='.+?" + re.escape(unidecode(lang)) + "'", xmllist)[0]
-        hardcoded = False
-    except IndexError:
-        try:
-            sub_id = re.findall("id=([0-9]+)' title='.+English", xmllist)[0]  # default back to English
-            print 'Language not found, reverting to English'
-            lang = 'English|English (US)'
-            hardcoded = False
-        except IndexError:
-            print "The video's subtitles cannot be found, or are region-locked."
-            hardcoded = True
-            sub_id = False
+	try:
+		sub_id = re.findall("id=([0-9]+)' title='\["+re.escape(unidecode(lang1)), xmllist)[0]
+		hardcoded = False
+		lang = lang1
+	except IndexError:
+		try:
+			sub_id = re.findall("id=([0-9]+)' title='\["+re.escape(unidecode(lang2)), xmllist)[0]
+			print 'Language not found, reverting to ' + lang2 + '.'
+			hardcoded = False
+			lang = lang2
+		except IndexError:
+			try:
+				sub_id = re.findall("id=([0-9]+)' title='\[English", xmllist)[0]  # default back to English
+				print 'Backup language not found, reverting to English.'
+				hardcoded = False
+				lang = 'English'
+			except IndexError:
+				print "The video's subtitles cannot be found, or are region-locked."
+				hardcoded = True
+				sub_id = False
 
 if not hardcoded:
     xmlsub = altfuncs.getxml('RpcApiSubtitle_GetXml', sub_id)
-    formattedSubs = CrunchyDec().returnsubs(xmlsub)
+    formattedsubs = CrunchyDec().returnsubs(xmlsub)
     subfile = open(title + '.ass', 'wb')
-    subfile.write(formattedSubs.encode('utf-8-sig'))
+    subfile.write(formattedsubs.encode('utf-8-sig'))
     subfile.close()
-    shutil.move(title + '.ass', '.\export\\')
+    shutil.move(title + '.ass', os.path.join(os.getcwd(), 'export', ''))
 
 print 'Subtitles for '+title+' have been downloaded'
