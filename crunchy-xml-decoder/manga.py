@@ -14,7 +14,7 @@ import zipfile
 import shutil
 from zipfile import ZipFile
 from itertools import izip
-# from time import sleep
+from time import sleep
 
 userdata = shelve.open('shelf', writeback=True)
 
@@ -34,6 +34,10 @@ def makeapi(method, options):
     url = userdata['API_URL']+'/'+method
     global session
     req = session.get(url, params=payload, headers=headers)
+    if req.status_code == 404:
+        # print 'Caught 404, trying again in 4s.'
+        sleep(4)
+        req = session.get(url, params=payload, headers=headers)
     json_data = req.text
     return json.loads(json_data)
 
