@@ -22,10 +22,13 @@ def config():
     resolution = qualities[quality][1]
     global lang
     lang = configr.get('SETTINGS', 'language')
-    lang = {'Espanol_Espana': u'Español (Espana)', 'Francais': u'Français (France)', 'Portugues': u'Português (Brasil)',
-            'English': u'English|English (US)', 'Espanol': u'Español', 'Turkce': u'Türkçe', 'Italiano': u'Italiano',
-            'Arabic': u'العربية', 'Deutsch': u'Deutsch'}[lang]
-    return lang
+    lang2 = configr.get('SETTINGS', 'language2')
+    langd = {'Espanol_Espana': u'Español (Espana)', 'Francais': u'Français (France)', 'Portugues': u'Português (Brasil)',
+            'English': u'English', 'Espanol': u'Español', 'Turkce': u'Türkçe', 'Italiano': u'Italiano',
+            'Arabic': u'العربية', 'Deutsch': u'Deutsch'}
+    lang = langd[lang]
+    lang2 = langd[lang2]
+    return [lang, lang2]
 
 
 def playerrev(url):
