@@ -56,9 +56,6 @@ try:
 except IndexError:
     pass
 
-vid_id = xmlconfig.find('media_id').string
-
-
 xmllist = altfuncs.getxml('RpcApiSubtitle_GetListing', media_id)
 xmllist = unidecode(xmllist).replace('><', '>\n<')
 
