@@ -1,8 +1,9 @@
 @ECHO off
-
+@md export 2>nul
 rem Crunchyroll Export Script DX - Last Updated 2015/02/09
 rem Removes need for rtmpExplorer
 rem ORIGINAL SOURCE - http://www.darkztar.com/forum/showthread.php?219034-Ripping-videos-amp-subtitles-from-Crunchyroll-%28noob-friendly%29
+if not exist cookies call _make_cookies.bat
 
 GOTO STEP1-GETVIDEO
 

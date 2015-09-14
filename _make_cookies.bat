@@ -1,5 +1,5 @@
 @ECHO OFF
-
+del /f "cookies" 1>nul 2>nul
 :choice
 set /P c=Do you have an account [Y/N]?
 if /I "%c%" EQU "Y" goto :yes
@@ -12,7 +12,6 @@ goto :choice
 goto :continue
 
 :no
-del "cookies.txt"
 "crunchy-xml-decoder\login.py" no
 
 :continue
