@@ -81,7 +81,10 @@ sub_id3 = [word.replace('[Portugues (Brasil)]','por') for word in sub_id3]
 sub_id3 = [word.replace('[Francais (France)]','fre') for word in sub_id3]
 sub_id3 = [word.replace('[Espanol (Espana)]','spa') for word in sub_id3]
 sub_id3 = [word.replace('[Espanol]','spa') for word in sub_id3]
-#else:
+sub_id3 = [word.replace('[Italiano]','ita') for word in sub_id3]
+sub_id3 = [word.replace('[l`rby@]','ara') for word in sub_id3]
+#sub_id4 = [word.replace('[l`rby@]',u'[العربية]') for word in sub_id4]
+sub_id4 = [word.replace('[l`rby@]',u'[Arabic]') for word in sub_id4]#else:
 #	try:
 #		sub_id = re.findall("id=([0-9]+)' title='\["+re.escape(unidecode(lang1)), xmllist)[0]
 #		hardcoded = False
