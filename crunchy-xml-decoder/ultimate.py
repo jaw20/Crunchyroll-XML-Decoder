@@ -183,6 +183,14 @@ def subtitles(eptitle):
         sub_id = False
 	else:
 		try:
+			try:
+				sub_id = re.findall("id=([0-9]+)' title='\["+re.escape(unidecode(lang1)), xmllist)[0]
+				lang = lang1
+			except IndexError:
+				try:
+					sub_id = re.findall("id=([0-9]+)' title='\["+re.escape(unidecode(lang2)), xmllist)[0]
+					lang = lang2
+				
 			sub_id2 = re.findall("id=([0-9]+)", xmllist)
 			sub_id3 = re.findall("title='(\[.+\]) ", xmllist)
 			sub_id4 = re.findall("title='(\[.+\]) ", xmllist)
@@ -246,16 +254,16 @@ else:
         subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" --language 1:jpn -a 1 -d 0 ' +
                         '".\export\\' + title + '.flv"')
     else:
-        #sublang = {u'Español (Espana)': 'spa', u'Français (France)': 'fre', u'Português (Brasil)': 'por',
-        #           u'English': 'eng', u'Español': 'spa', u'Türkçe': 'tur', u'Italiano': 'ita',
-        #           u'العربية': 'ara', u'Deutsch': 'deu'}[lang]
+        sublang = {u'Español (Espana)': 'spa', u'Français (France)': 'fre', u'Português (Brasil)': 'por',
+                   u'English': 'eng', u'Español': 'spa', u'Türkçe': 'tur', u'Italiano': 'ita',
+                   u'العربية': 'ara', u'Deutsch': 'deu'}[lang]
 #		defaulttrack = False
 		for i in sub_id2:
 			sublangc=sub_id3.pop(0)
 			sublangn=sub_id4.pop(0)
 #			if not defaulttrack:
-#				if sublangn=lang1:
-#					subtitlefilecode=subtitlefilecode+' --default-track 0:yes'
+			if sublangn=sublang:
+				subtitlefilecode=subtitlefilecode+' --default-track 0:yes'
 			subtitlefilecode=subtitlefilecode+' --language 0:' + sublangc + ' --track-name 0:"' + sublangn + '" -s 0 "".\export\\'+title+'['+sublangc+']'+sublangn+'.ass"'
 #        subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" --language 1:jpn -a 1 -d 0 ' +
 #                        '".\export\\' + title + '.flv" --language 0:' + sublang + ' -s 0 ".\export\\'+title+'.ass"')
