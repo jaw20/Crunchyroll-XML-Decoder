@@ -181,35 +181,56 @@ def subtitles(eptitle):
         print 'The video has hardcoded subtitles.'
         hardcoded = True
         sub_id = False
-    else:
-        try:
-            sub_id = re.findall("id=([0-9]+)' title='\["+re.escape(unidecode(lang1)), xmllist)[0]
-            hardcoded = False
-            lang = lang1
-        except IndexError:
-            try:
-                sub_id = re.findall("id=([0-9]+)' title='\["+re.escape(unidecode(lang2)), xmllist)[0]
-                print 'Language not found, reverting to ' + lang2 + '.'
-                hardcoded = False
-                lang = lang2
-            except IndexError:
-                try:
-                    sub_id = re.findall("id=([0-9]+)' title='\[English", xmllist)[0]  # default back to English
-                    print 'Backup language not found, reverting to English.'
-                    hardcoded = False
-                    lang = 'English'
-                except IndexError:
-                    print "The video's subtitles cannot be found, or are region-locked."
-                    hardcoded = True
-                    sub_id = False
+	else:
+		try:
+			sub_id2 = re.findall("id=([0-9]+)", xmllist)
+			sub_id3 = re.findall("title='(\[.+\]) ", xmllist)
+			sub_id4 = re.findall("title='(\[.+\]) ", xmllist)
+			hardcoded = False
+		except IndexError:
+			print "The video's subtitles cannot be found, or are region-locked."
+			hardcoded = True
+			sub_id = False
+	sub_id3 = [word.replace('[English (US)]','eng') for word in sub_id3]
+	sub_id3 = [word.replace('[Deutsch]','deu') for word in sub_id3]
+	sub_id3 = [word.replace('[Portugues (Brasil)]','por') for word in sub_id3]
+	sub_id3 = [word.replace('[Francais (France)]','fre') for word in sub_id3]
+	sub_id3 = [word.replace('[Espanol (Espana)]','spa') for word in sub_id3]
+	sub_id3 = [word.replace('[Espanol]','spa') for word in sub_id3]
+#    else:
+#        try:
+#            sub_id = re.findall("id=([0-9]+)' title='\["+re.escape(unidecode(lang1)), xmllist)[0]
+#            hardcoded = False
+#            lang = lang1
+#        except IndexError:
+#            try:
+#                sub_id = re.findall("id=([0-9]+)' title='\["+re.escape(unidecode(lang2)), xmllist)[0]
+#                print 'Language not found, reverting to ' + lang2 + '.'
+#                hardcoded = False
+#                lang = lang2
+#            except IndexError:
+#                try:
+#                    sub_id = re.findall("id=([0-9]+)' title='\[English", xmllist)[0]  # default back to English
+#                    print 'Backup language not found, reverting to English.'
+#                    hardcoded = False
+#                    lang = 'English'
+#                except IndexError:
+#                    print "The video's subtitles cannot be found, or are region-locked."
+#                    hardcoded = True
+#                    sub_id = False
 
     if not hardcoded:
-        xmlsub = altfuncs.getxml('RpcApiSubtitle_GetXml', sub_id)
-        formattedsubs = CrunchyDec().returnsubs(xmlsub)
-        subfile = open(eptitle + '.ass', 'wb')
-        subfile.write(formattedsubs.encode('utf-8-sig'))
-        subfile.close()
-        shutil.move(eptitle + '.ass', os.path.join(os.getcwd(), 'export', ''))
+		sub_id3_t=sub_id3
+		sub_id4_t=sub_id4
+		for i in sub_id2:
+			#xmlsub = altfuncs.getxml('RpcApiSubtitle_GetXml', sub_id)
+			xmlsub = altfuncs.getxml('RpcApiSubtitle_GetXml', i)
+			formattedsubs = CrunchyDec().returnsubs(xmlsub)
+			#subfile = open(eptitle + '.ass', 'wb')
+			subfile = open('.\\export\\'+title+'['+sub_id3_t.pop(0)+']'+sub_id4_t.pop(0)+'.ass', 'wb')
+			subfile.write(formattedsubs.encode('utf-8-sig'))
+			subfile.close()
+			#shutil.move(eptitle + '.ass', os.path.join(os.getcwd(), 'export', ''))
 
 if 'subs' in sys.argv:
     subtitles(title)
@@ -225,11 +246,21 @@ else:
         subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" --language 1:jpn -a 1 -d 0 ' +
                         '".\export\\' + title + '.flv"')
     else:
-        sublang = {u'Español (Espana)': 'spa', u'Français (France)': 'fre', u'Português (Brasil)': 'por',
-                   u'English': 'eng', u'Español': 'spa', u'Türkçe': 'tur', u'Italiano': 'ita',
-                   u'العربية': 'ara', u'Deutsch': 'deu'}[lang]
+        #sublang = {u'Español (Espana)': 'spa', u'Français (France)': 'fre', u'Português (Brasil)': 'por',
+        #           u'English': 'eng', u'Español': 'spa', u'Türkçe': 'tur', u'Italiano': 'ita',
+        #           u'العربية': 'ara', u'Deutsch': 'deu'}[lang]
+#		defaulttrack = False
+		for i in sub_id2:
+			sublangc=sub_id3.pop(0)
+			sublangn=sub_id4.pop(0)
+#			if not defaulttrack:
+#				if sublangn=lang1:
+#					subtitlefilecode=subtitlefilecode+' --default-track 0:yes'
+			subtitlefilecode=subtitlefilecode+' --language 0:' + sublangc + ' --track-name 0:"' + sublangn + '" -s 0 "".\export\\'+title+'['+sublangc+']'+sublangn+'.ass"'
+#        subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" --language 1:jpn -a 1 -d 0 ' +
+#                        '".\export\\' + title + '.flv" --language 0:' + sublang + ' -s 0 ".\export\\'+title+'.ass"')
         subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" --language 1:jpn -a 1 -d 0 ' +
-                        '".\export\\' + title + '.flv" --language 0:' + sublang + ' -s 0 ".\export\\'+title+'.ass"')
+                        '".\export\\' + title + '.flv"' + subtitlefilecode +'--title' + title)
     print 'Merge process complete'
     subs_only = False
 
