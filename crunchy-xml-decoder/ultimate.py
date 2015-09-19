@@ -274,9 +274,11 @@ if 'subs' in sys.argv:
     hardcoded = True  # bleh
 else:
     video()
+    heightp = subprocess.Popen('"video-engine\MediaInfo.exe" --inform=Video;%Height% ".\export\\' + title + '.flv"' ,shell=True , stdout=subprocess.PIPE).stdout.read()
     subtitles(title)
     subtitlefilecode=''
     #shutil.move(title + '.flv', os.path.join(os.getcwd(), 'export', ''))
+
 
     print 'Starting mkv merge'
     if hardcoded:
@@ -299,7 +301,7 @@ else:
 #        subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" --language 1:jpn -a 1 -d 0 ' +
 #                        '".\export\\' + title + '.flv" --language 0:' + sublang + ' -s 0 ".\export\\'+title+'.ass"')
 #        print '"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" --language 0:jpn --language 1:jpn -a 1 -d 0 ' + '".\export\\' + title + '.flv"' + subtitlefilecode +' --title "' + title +'"'
-        subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" --language 0:jpn --language 1:jpn -a 1 -d 0 ' +
+        subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '[' + heightp.strip() +'p].mkv" --language 0:jpn --language 1:jpn -a 1 -d 0 ' +
                         '".\export\\' + title + '.flv"' + subtitlefilecode +' --title "' + title +'"')
     print 'Merge process complete'
     subs_only = False
