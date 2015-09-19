@@ -44,7 +44,10 @@ crunchy-xml-decoder\functtest.py Crypto_ 2>nul &&(set "Crypto_stat=installed") |
 crunchy-xml-decoder\functtest.py lxml_ 2>nul &&(set "lxml_stat=installed") ||(set "lxml_stat=not installed")
 rem pause
 
-for /f "tokens=4" %%i in ('reg query HKEY_CLASSES_ROOT\Python.CompiledFile\shell\open\command /z /ve') do set python_p=%%i
+rem for /f "tokens=4" %%i in ('reg query HKEY_CLASSES_ROOT\Python.CompiledFile\shell\open\command /z /ve') do set python_p=%%i
+for /f "tokens=1-9 skip=2" %%i in ('reg query HKEY_CLASSES_ROOT\Python.CompiledFile\shell\open\command /z /ve') do (
+call :_python_dir1 %%i %%j %%k %%l %%m %%n %%o %%p %%q
+)
 rem set python_p="C:\Python33\New folder (2)\python.exe"
 rem set python_p
 call echo python directory=%%python_p%%
@@ -96,6 +99,19 @@ rem move /Y .\temp\PLATLIB\Crypto .\crunchy-xml-decoder\
 xcopy .\temp\PLATLIB\Crypto .\crunchy-xml-decoder\Crypto /E /C /H /R /Y 1>nul 2>nul
 rem move /Y .\temp\PLATLIB\lxml .\crunchy-xml-decoder\
 xcopy .\temp\PLATLIB\lxml .\crunchy-xml-decoder\lxml /E /C /H /R /Y 1>nul 2>nul
+goto :eof
+
+:_python_dir1
+for /l %%i in (1,1,9) do (
+call set temp_data=%%%%i
+call set temp_data=%%temp_data:^(=%%
+call set temp_data=%%temp_data:^)=%%
+call :_python_dir2 %%temp_data%%
+)
+goto :eof
+
+:_python_dir2
+if not [%1] equ [] if not [%1] equ [""] copy %1 nul 1>nul 2>nul &&(call set python_p=%1)
 goto :eof
 
 GOTO STEP1-GETVIDEO
