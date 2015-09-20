@@ -14,17 +14,35 @@ if "%3"=="" (set seasonnum=1) else (set seasonnum=%3)
 IF not "%1"=="" (
 SET video_url=%1
 ) else (
-ECHO Please Enter CrunchyRoll Video URL or Function (c,cookies,s,subs-only^)
+ECHO Please Enter CrunchyRoll Video URL or Function (c,cookies,s,subs-only,q,queue^)
 SET /p video_url=
 )
 if /I "%video_url%" EQU "c" call :_make_cookies & goto :_starthere
 if /I "%video_url%" EQU "cookies" call :_make_cookies & goto :_starthere
 if /I "%video_url%" EQU "s" goto :SETUP
 if /I "%video_url%" EQU "subs-only" goto :SETUP
+if /I "%video_url%" EQU "q" goto :_run_queue_list
+if /I "%video_url%" EQU "queue" goto :_run_queue_list
 call ".\crunchy-xml-decoder\ultimate.py" %video_url% %epnum% %seasonnum%
 pause
 GOTO :eof
 rem Function
+:_run_queue_list
+copy queue.txt nul 1>nul 2>nul &&(start /wait queue.txt) ||(
+echo #add links to this file, save then close the file>queue.txt
+start /wait queue.txt
+)
+for /f "tokens=*" %%i in (queue.txt) do (
+set "templist=%%i"
+call :_check_queue_list "%%templist%%" "%%templist:~0,1%%"
+)
+pause
+goto :eof
+
+:_check_queue_list
+if not [%~2] equ [#] call ".\crunchy-xml-decoder\ultimate.py" %~1 1 1
+goto :eof
+
 :_make_cookies
 del /f "cookies" 1>nul 2>nul
 :choice
