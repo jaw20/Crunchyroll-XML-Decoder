@@ -6,6 +6,24 @@ rem Removes need for rtmpExplorer
 rem ORIGINAL SOURCE - http://www.darkztar.com/forum/showthread.php?219034-Ripping-videos-amp-subtitles-from-Crunchyroll-%28noob-friendly%29
 if not exist cookies call :_make_cookies
 call :_lxml_crypto_auto_download
+:_check_settings_file
+copy settings.ini nul 1>nul 2>nul ||(
+echo [SETTINGS]>settings.ini
+echo # Set this to the preferred quality. Possible values are: "android" ^(hard-subbed^), "360p", "480p", "720p", "1080p", or "highest" for highest available.>>settings.ini
+echo # Note that any quality higher than 360p still requires premium, unless it's available that way for free ^(some first episodes^).>>settings.ini
+echo # We're not miracle workers.>>settings.ini
+echo video_quality = highest>>settings.ini
+echo:>>settings.ini
+echo # Set this to the desired subtitle language. If the subtitles aren't available in that language, it reverts to the second language option ^(below^).>>settings.ini
+echo # Available languages: English, Espanol, Espanol_Espana, Francais, Portugues, Turkce, Italiano, Arabic, Deutsch>>settings.ini
+echo language = English>>settings.ini
+echo:>>settings.ini
+echo # If the first language isn't available, what language would you like as a backup? Only if then they aren't found, then it goes to English as default>>settings.ini
+echo language2 = English>>settings.ini
+echo:>>settings.ini
+echo # Set this if you want to use --forced-track rather than --default-track for subtitle>>settings.ini
+echo forcesubtitle = False>>settings.ini
+)
 :_starthere
 echo ____________________________________
 
@@ -40,7 +58,7 @@ pause
 goto :eof
 
 :_check_queue_list
-if not [%~2] equ [#] call ".\crunchy-xml-decoder\ultimate.py" %~1 1 1
+if not [%~2] equ [#] call ".\crunchy-xml-decoder\ultimate.py" %~1 %epnum% %seasonnum%
 goto :eof
 
 :_make_cookies

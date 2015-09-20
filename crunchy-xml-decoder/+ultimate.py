@@ -78,8 +78,7 @@ subprocess.call('title ' + page_url.replace('http://www.crunchyroll.com/', ''), 
 
 # ----------
 
-#lang1, lang2 = altfuncs.config()
-lang1, lang2, forcesub = altfuncs.config()
+lang1, lang2 = altfuncs.config()
 player_revision = altfuncs.playerrev(page_url)
 html = altfuncs.gethtml(page_url)
 
@@ -283,8 +282,8 @@ else:
 
     print 'Starting mkv merge'
     if hardcoded:
-        subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '[' + heightp.strip() +'p].mkv" --language 1:jpn -a 1 -d 0 ' +
-                        '".\export\\' + title + '.flv"' +' --title "' + title +'"')
+        subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" --language 1:jpn -a 1 -d 0 ' +
+                        '".\export\\' + title + '.flv"')
     else:
         sublang = {u'Español (Espana)': 'spa', u'Français (France)': 'fre', u'Português (Brasil)': 'por',
                    u'English': 'eng', u'Español': 'spa', u'Türkçe': 'tur', u'Italiano': 'ita',
@@ -295,24 +294,15 @@ else:
 			defaultsub=''
 			sublangc=sub_id5.pop(0)
 			sublangn=sub_id6.pop(0)
-#			print forcesub
-			if not forcesub:
-				if sublangc == sublang:
-					defaultsub=' --default-track 0:yes --forced-track 0:no'
-				else:
-					defaultsub=' --default-track 0:no --forced-track 0:no'
-			else:
-				if sublangc == sublang:
-					defaultsub=' --default-track 0:yes --forced-track 0:yes'
-				else:
-					defaultsub=' --default-track 0:no --forced-track 0:no'
+#			if not defaulttrack:
+			if sublangc == sublang:
+				defaultsub=' --default-track 0:yes'
 			subtitlefilecode=subtitlefilecode+' --language 0:' + sublangc + defaultsub +' --track-name 0:"' + sublangn + '" -s 0 ".\export\\'+title+'['+sublangc+']'+sublangn+'.ass"'
 #        subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" --language 1:jpn -a 1 -d 0 ' +
 #                        '".\export\\' + title + '.flv" --language 0:' + sublang + ' -s 0 ".\export\\'+title+'.ass"')
 #        print '"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" --language 0:jpn --language 1:jpn -a 1 -d 0 ' + '".\export\\' + title + '.flv"' + subtitlefilecode +' --title "' + title +'"'
-        mkvcmd='"video-engine\mkvmerge.exe" -o ".\export\\' + title + '[' + heightp.strip() +'p].mkv" --language 0:jpn --language 1:jpn -a 1 -d 0 ' + '".\export\\' + title + '.flv"' + subtitlefilecode +' --title "' + title +'"'
-#        print mkvcmd
-        subprocess.call(mkvcmd)
+        subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '[' + heightp.strip() +'p].mkv" --language 0:jpn --language 1:jpn -a 1 -d 0 ' +
+                        '".\export\\' + title + '.flv"' + subtitlefilecode +' --title "' + title +'"')
     print 'Merge process complete'
     subs_only = False
 

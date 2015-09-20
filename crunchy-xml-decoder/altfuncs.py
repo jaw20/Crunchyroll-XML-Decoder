@@ -28,7 +28,8 @@ def config():
             'Arabic': u'العربية', 'Deutsch': u'Deutsch'}
     lang = langd[lang]
     lang2 = langd[lang2]
-    return [lang, lang2]
+    forcesub = configr.getboolean('SETTINGS', 'forcesubtitle')
+    return [lang, lang2, forcesub]
 
 
 def playerrev(url):
