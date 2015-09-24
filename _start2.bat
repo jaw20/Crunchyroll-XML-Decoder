@@ -1,7 +1,7 @@
 @ECHO off
 if "%1"=="debug" (
 echo debuging
-call "%~dpf0" 2>&1|video-engine\tee.exe -a debug.log
+call "%~dpf0" debuging 2>&1|video-engine\tee.exe -a debug.c.log
 
 goto :eof
 )
@@ -36,7 +36,12 @@ echo ____________________________________
 if "%2"=="" (set epnum=1) else (set epnum=%2)
 if "%3"=="" (set seasonnum=1) else (set seasonnum=%3)
 IF not "%1"=="" (
-SET video_url=%1
+	IF not "%1"=="debuging" (
+	SET video_url=%1
+	) else (
+	ECHO Please Enter CrunchyRoll Video URL or Function (c,cookies,s,subs-only,q,queue^)
+	SET /p video_url=
+	)
 ) else (
 ECHO Please Enter CrunchyRoll Video URL or Function (c,cookies,s,subs-only,q,queue^)
 SET /p video_url=
@@ -47,7 +52,11 @@ if /I "%video_url%" EQU "s" goto :SETUP
 if /I "%video_url%" EQU "subs-only" goto :SETUP
 if /I "%video_url%" EQU "q" goto :_run_queue_list
 if /I "%video_url%" EQU "queue" goto :_run_queue_list
+if not [%1]==[debuging] (
 call ".\crunchy-xml-decoder\ultimate.py" %video_url% %epnum% %seasonnum%
+) else (
+call ".\crunchy-xml-decoder\debug.py"  %video_url% %epnum% %seasonnum%
+) 
 pause
 GOTO :eof
 rem Function
