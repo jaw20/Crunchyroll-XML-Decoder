@@ -1,4 +1,10 @@
 @ECHO off
+if "%1"=="debug" (
+echo debuging
+call "%~dpf0" 2>&1|video-engine\tee.exe -a debug.log
+
+goto :eof
+)
 @md export 2>nul
 @setlocal EnableExtensions
 rem Crunchyroll Export Script DX - Last Updated 2015/02/09
@@ -97,6 +103,16 @@ set _bit=%%j
 call set _ver=%%_ver:~0,-2%%
 )
 call echo python version=%%_ver%% %%_bit%%Bit
+for /f "usebackq skip=2 tokens=*" %%k in (`reg query "HKLM\Software\Microsoft\Windows NT\CurrentVersion" /v "ProductName"`) do (
+set winname_=%%k
+call set winname_=%%winname_:ProductName=%%
+call set winname_=%%winname_:REG_SZ=%%
+call set winname_=%%winname_:^(1^)=%%
+call set winname_=%%winname_:  =%%
+call echo OS Name=%%winname_%%
+)
+for /f "usebackq tokens=*" %%k in (`ver^|findstr Windows`) do echo OS Version=%%k
+rem ver|findstr Windows
 call echo system type=%%PROCESSOR_ARCHITECTURE%%
 rem set "Crypto_stat=installed"
 rem set "lxml_stat=installed"
