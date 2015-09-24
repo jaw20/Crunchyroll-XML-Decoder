@@ -7,6 +7,7 @@ import subprocess
 import sys
 import HTMLParser
 import altfuncs
+
 from bs4 import BeautifulSoup
 from crunchyDec import CrunchyDec
 from unidecode import unidecode
@@ -15,6 +16,13 @@ debugfile = open('.\\debug.p.log', 'w')
 def traceit(frame, event, arg):
     if event == "line":
         lineno = frame.f_lineno
+        if "__file__" in frame.f_globals:
+            filename = frame.f_globals["__file__"]
+            if (filename.endswith(".pyc") or filename.endswith(".pyo")):
+                filename = filename[:-1]
+            line = linecache.getline(filename, lineno)
+        else:
+            line = ''
         #filename = frame.f_globals["__file__"]
         #if (filename.endswith(".pyc") or filename.endswith(".pyo")):
         #    filename = filename[:-1]
@@ -23,7 +31,7 @@ def traceit(frame, event, arg):
         #print "%s:%s: %s" % (name, lineno, line.rstrip())
         #print "%s: %s" % (lineno, debug_nice(frame.f_globals))
         
-        debugvalue = str("%s:%s: %s" % (name, lineno, debug_nice(frame.f_globals)))+'\n'
+        debugvalue = str("%s:%s: %s\n%s" % (name, lineno, line.rstrip(), debug_nice(frame.f_globals)))+'\n'
         #print debugvalue
         debugfile.write(debugvalue)
         
