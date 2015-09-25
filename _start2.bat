@@ -5,13 +5,14 @@ call "%~dpf0" debuging 2>&1|video-engine\tee.exe -a debug.c.log
 
 goto :eof
 )
+IF "%1"=="debuging" ECHO on
 @md export 2>nul
 @setlocal EnableExtensions
 rem Crunchyroll Export Script DX - Last Updated 2015/02/09
 rem Removes need for rtmpExplorer
 rem ORIGINAL SOURCE - http://www.darkztar.com/forum/showthread.php?219034-Ripping-videos-amp-subtitles-from-Crunchyroll-%28noob-friendly%29
 if not exist cookies call :_make_cookies
-call :_lxml_crypto_auto_download
+call :_lxml_crypto_auto_download "%~1"
 :_check_settings_file
 copy settings.ini nul 1>nul 2>nul ||(
 echo [SETTINGS]>settings.ini
@@ -125,7 +126,7 @@ rem ver|findstr Windows
 call echo system type=%%PROCESSOR_ARCHITECTURE%%
 rem set "Crypto_stat=installed"
 rem set "lxml_stat=installed"
-call :download_ %%_ver%% %%_bit%% "%%Crypto_stat%%" "%%lxml_stat%%" %%PROCESSOR_ARCHITECTURE%% %%PROCESSOR_ARCHITECTURE:64=%%
+call :download_ %%_ver%% %%_bit%% "%%Crypto_stat%%" "%%lxml_stat%%" %%PROCESSOR_ARCHITECTURE%% %%PROCESSOR_ARCHITECTURE:64=%% "%~1"
 
 rd /s /q temp
 goto :eof
@@ -154,12 +155,21 @@ if %3=="not installed" call video-engine\wget.exe -c --no-check-certificate -O "
 if %4=="not installed" call video-engine\wget.exe -c --no-check-certificate -O "temp\crypto.exe" %%crypto_get%%
 rem if %3=="not installed" call copy ..\lxml\%%lxml_get:~44,-37%% "temp\lxml.exe"
 rem if %4=="not installed" call copy ..\lxml\%%crypto_get:~49%% "temp\crypto.exe"
+IF not "%~7"=="debuging" (
 if %5 EQU %6 video-engine\7z.exe x -otemp\ temp\  1>nul 2>nul
 if not %5 EQU %6 video-engine\7z_64.exe x -otemp\ temp\ 1>nul 2>nul
 rem move /Y .\temp\PLATLIB\Crypto .\crunchy-xml-decoder\
 xcopy .\temp\PLATLIB\Crypto .\crunchy-xml-decoder\Crypto /E /C /H /R /Y 1>nul 2>nul
 rem move /Y .\temp\PLATLIB\lxml .\crunchy-xml-decoder\
 xcopy .\temp\PLATLIB\lxml .\crunchy-xml-decoder\lxml /E /C /H /R /Y 1>nul 2>nul
+) else (
+if %5 EQU %6 video-engine\7z.exe x -otemp\ temp\
+if not %5 EQU %6 video-engine\7z_64.exe x -otemp\ temp\
+rem move /Y .\temp\PLATLIB\Crypto .\crunchy-xml-decoder\
+xcopy .\temp\PLATLIB\Crypto .\crunchy-xml-decoder\Crypto /E /C /H /R /Y
+rem move /Y .\temp\PLATLIB\lxml .\crunchy-xml-decoder\
+xcopy .\temp\PLATLIB\lxml .\crunchy-xml-decoder\lxml /E /C /H /R /Y
+)
 goto :eof
 
 :_python_dir1
