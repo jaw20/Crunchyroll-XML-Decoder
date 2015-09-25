@@ -156,18 +156,14 @@ if %4=="not installed" call video-engine\wget.exe -c --no-check-certificate -O "
 rem if %3=="not installed" call copy ..\lxml\%%lxml_get:~44,-37%% "temp\lxml.exe"
 rem if %4=="not installed" call copy ..\lxml\%%crypto_get:~49%% "temp\crypto.exe"
 IF not "%~7"=="debuging" (
-if %5 EQU %6 video-engine\7z.exe x -otemp\ temp\  1>nul 2>nul
-if not %5 EQU %6 video-engine\7z_64.exe x -otemp\ temp\ 1>nul 2>nul
-rem move /Y .\temp\PLATLIB\Crypto .\crunchy-xml-decoder\
+.\video-engine\7z.exe x -otemp\ temp\  1>nul 2>nul
+.\video-engine\7z_64.exe x -otemp\ temp\ 1>nul 2>nul
 xcopy .\temp\PLATLIB\Crypto .\crunchy-xml-decoder\Crypto /E /C /H /R /Y 1>nul 2>nul
-rem move /Y .\temp\PLATLIB\lxml .\crunchy-xml-decoder\
 xcopy .\temp\PLATLIB\lxml .\crunchy-xml-decoder\lxml /E /C /H /R /Y 1>nul 2>nul
 ) else (
-if %5 EQU %6 video-engine\7z.exe x -otemp\ temp\
-if not %5 EQU %6 video-engine\7z_64.exe x -otemp\ temp\
-rem move /Y .\temp\PLATLIB\Crypto .\crunchy-xml-decoder\
+.\video-engine\7z.exe x -otemp\ temp\
+.\video-engine\7z_64.exe x -otemp\ temp\
 xcopy .\temp\PLATLIB\Crypto .\crunchy-xml-decoder\Crypto /E /C /H /R /Y
-rem move /Y .\temp\PLATLIB\lxml .\crunchy-xml-decoder\
 xcopy .\temp\PLATLIB\lxml .\crunchy-xml-decoder\lxml /E /C /H /R /Y
 )
 goto :eof
