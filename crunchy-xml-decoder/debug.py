@@ -34,7 +34,11 @@ def traceit(frame, event, arg):
         debugvalue = str("%s:%s: %s\n%s" % (name, lineno, line.rstrip(), debug_nice(frame.f_globals)))+'\n'
         #print debugvalue
         debugfile.write(debugvalue)
-        
+        if "xmlconfig" in frame.f_globals:
+            #xmlconfig = frame.f_globals["xmlconfig"]
+            decodec_xml = open('.\\decodec_xml.txt', 'w')
+            decodec_xml.write(str(frame.f_globals["xmlconfig"]))
+            decodec_xml.close()
     return traceit
 
 def debug_nice(locals_dict, keys=[]):
@@ -66,5 +70,6 @@ sys.settrace(traceit)
 
 	
 import ultimate
+
 debugfile.close()
 #ultimate()
