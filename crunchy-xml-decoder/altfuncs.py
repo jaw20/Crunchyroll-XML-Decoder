@@ -34,11 +34,15 @@ def config():
 def playerrev(url):
     global player_revision
     try:
-        player_revision = re.findall(r'flash\\/(.+)\\/StandardVideoPlayer.swf', gethtml(url))[0]
+        player_revision = re.findall(r'flash\\/(.+)\\/StandardVideoPlayer', gethtml(url))[0]
     except IndexError:
-        url += '?skip_wall=1'  # perv
-        html = gethtml(url)
-        player_revision = re.findall(r'flash\\/(.+)\\/StandardVideoPlayer.swf', html)[0]
+        try:
+            url += '?skip_wall=1'  # perv
+            html = gethtml(url)
+            player_revision = re.findall(r'flash\\/(.+)\\/StandardVideoPlayer', html)[0]
+        except IndexError:
+            open('debug.html', 'w').write(html.encode('utf-8'))
+            sys.exit('Sorry, but it looks like something went wrong with accessing the Crunchyroll page. Please make an issue on GitHub and attach debug.html which should be in the folder.')
     return player_revision
 
 
@@ -55,7 +59,7 @@ def gethtml(url):
             # session.cookies['sess_id'] = requests.get('http://www.crunblocker.com/sess_id.php').text
     parts = urlparse.urlsplit(url)
     if not parts.scheme or not parts.netloc:
-        print 'Apparently not an URL'
+        print 'Apparently not a URL'
         sys.exit()
     data = {'Referer': 'http://crunchyroll.com/', 'Host': 'www.crunchyroll.com',
             'User-Agent': 'Mozilla/5.0  Windows NT 6.1; rv:26.0 Gecko/20100101 Firefox/26.0'}
