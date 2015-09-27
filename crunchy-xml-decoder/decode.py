@@ -59,38 +59,61 @@ except IndexError:
 xmllist = altfuncs.getxml('RpcApiSubtitle_GetListing', media_id)
 xmllist = unidecode(xmllist).replace('><', '>\n<')
 
+
+
 if '<media_id>None</media_id>' in xmllist:
     print 'The video has hardcoded subtitles.'
     hardcoded = True
     sub_id = False
 else:
 	try:
-		sub_id = re.findall("id=([0-9]+)' title='\["+re.escape(unidecode(lang1)), xmllist)[0]
+		sub_id2 = re.findall("id=([0-9]+)", xmllist)
+		sub_id3 = re.findall("title='(\[.+\]) ", xmllist)
+		sub_id4 = re.findall("title='(\[.+\]) ", xmllist)
 		hardcoded = False
-		lang = lang1
 	except IndexError:
-		try:
-			sub_id = re.findall("id=([0-9]+)' title='\["+re.escape(unidecode(lang2)), xmllist)[0]
-			print 'Language not found, reverting to ' + lang2 + '.'
-			hardcoded = False
-			lang = lang2
-		except IndexError:
-			try:
-				sub_id = re.findall("id=([0-9]+)' title='\[English", xmllist)[0]  # default back to English
-				print 'Backup language not found, reverting to English.'
-				hardcoded = False
-				lang = 'English'
-			except IndexError:
-				print "The video's subtitles cannot be found, or are region-locked."
-				hardcoded = True
-				sub_id = False
-
+		print "The video's subtitles cannot be found, or are region-locked."
+		hardcoded = True
+		sub_id = False
+sub_id3 = [word.replace('[English (US)]','eng') for word in sub_id3]
+sub_id3 = [word.replace('[Deutsch]','deu') for word in sub_id3]
+sub_id3 = [word.replace('[Portugues (Brasil)]','por') for word in sub_id3]
+sub_id3 = [word.replace('[Francais (France)]','fre') for word in sub_id3]
+sub_id3 = [word.replace('[Espanol (Espana)]','spa') for word in sub_id3]
+sub_id3 = [word.replace('[Espanol]','spa') for word in sub_id3]
+sub_id3 = [word.replace('[Italiano]','ita') for word in sub_id3]
+sub_id3 = [word.replace('[l`rby@]','ara') for word in sub_id3]
+#sub_id4 = [word.replace('[l`rby@]',u'[العربية]') for word in sub_id4]
+sub_id4 = [word.replace('[l`rby@]',u'[Arabic]') for word in sub_id4]#else:
+#	try:
+#		sub_id = re.findall("id=([0-9]+)' title='\["+re.escape(unidecode(lang1)), xmllist)[0]
+#		hardcoded = False
+#		lang = lang1
+#	except IndexError:
+#		try:
+#			sub_id = re.findall("id=([0-9]+)' title='\["+re.escape(unidecode(lang2)), xmllist)[0]
+#			print 'Language not found, reverting to ' + lang2 + '.'
+#			hardcoded = False
+#			lang = lang2
+#		except IndexError:
+#			try:
+#				sub_id = re.findall("id=([0-9]+)' title='\[English", xmllist)[0]  # default back to English
+#				print 'Backup language not found, reverting to English.'
+#				hardcoded = False
+#				lang = 'English'
+#			except IndexError:
+#				print "The video's subtitles cannot be found, or are region-locked."
+#				hardcoded = True
+#				sub_id = False
 if not hardcoded:
-    xmlsub = altfuncs.getxml('RpcApiSubtitle_GetXml', sub_id)
-    formattedsubs = CrunchyDec().returnsubs(xmlsub)
-    subfile = open(title + '.ass', 'wb')
-    subfile.write(formattedsubs.encode('utf-8-sig'))
-    subfile.close()
-    shutil.move(title + '.ass', os.path.join(os.getcwd(), 'export', ''))
+	for i in sub_id2:
+		#xmlsub = altfuncs.getxml('RpcApiSubtitle_GetXml', sub_id)
+		xmlsub = altfuncs.getxml('RpcApiSubtitle_GetXml', i)
+		formattedsubs = CrunchyDec().returnsubs(xmlsub)
+		#subfile = open(eptitle + '.ass', 'wb')
+		subfile = open('.\\export\\'+title+'['+sub_id3.pop(0)+']'+sub_id4.pop(0)+'.ass', 'wb')
+		subfile.write(formattedsubs.encode('utf-8-sig'))
+		subfile.close()
+    #shutil.move(title + '.ass', os.path.join(os.getcwd(), 'export', ''))
 
 print 'Subtitles for '+title+' have been downloaded'
