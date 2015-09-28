@@ -278,9 +278,9 @@ login()
 mangalist = makeapi('list_series', {'content_type': 'jp_manga'})
 for i in mangalist:
     seriesid = i['series_id']
-    if i['total_chapters'] == 0:
-        print i['locale'][userdata['API_LOCALE']]['name']+' has no chapters'
-        continue
+    # if i['total_chapters'] == 0:
+        # print i['locale'][userdata['API_LOCALE']]['name']+' has no chapters'
+        # continue
 
     manga_name = i['locale'][userdata['API_LOCALE']]['name'].replace('/', ' - ').replace(':', '-')\
         .replace('?', '.').replace('"', '\'').strip()
@@ -364,6 +364,9 @@ for i in mangalist:
                 image = session.get(url=p['image_url'], timeout=16).content
             else:
                 image = session.get(url=p['locale'][userdata['API_LOCALE']]['encrypted_composed_image_url'], timeout=16).content
+            if len(image) == 0:
+                print 'Page '+str(ind)+' is missing, skipping.'
+                continue
             name = 'P'+str(ind).zfill(4)+'.jpg'
             myzip.writestr(name, decrypt(image))
             status = 'Downloaded page '+str(ind)+'/'+str(totalp)
