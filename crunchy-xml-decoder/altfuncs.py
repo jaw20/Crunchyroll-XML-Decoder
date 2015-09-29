@@ -21,6 +21,7 @@ def config():
     video_format = qualities[quality][0]
     resolution = qualities[quality][1]
     global lang
+    global lang2
     lang = configr.get('SETTINGS', 'language')
     lang2 = configr.get('SETTINGS', 'language2')
     langd = {'Espanol_Espana': u'Español (Espana)', 'Francais': u'Français (France)', 'Portugues': u'Português (Brasil)',
@@ -29,7 +30,8 @@ def config():
     lang = langd[lang]
     lang2 = langd[lang2]
     forcesub = configr.getboolean('SETTINGS', 'forcesubtitle')
-    forcesub = configr.getboolean('SETTINGS', 'forceusa')
+    global forceusa
+    forceusa = configr.getboolean('SETTINGS', 'forceusa')
     return [lang, lang2, forcesub, forceusa]
 
 
@@ -49,7 +51,6 @@ def playerrev(url):
 
 
 def gethtml(url):
-    global forceusa
     with open('cookies') as f:
         cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
         session = requests.session()
