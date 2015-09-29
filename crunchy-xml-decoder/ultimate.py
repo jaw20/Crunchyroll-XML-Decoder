@@ -78,8 +78,7 @@ subprocess.call('title ' + page_url.replace('http://www.crunchyroll.com/', ''), 
 
 # ----------
 
-#lang1, lang2 = altfuncs.config()
-lang1, lang2, forcesub = altfuncs.config()
+lang1, lang2, forcesub, forceusa = altfuncs.config()
 player_revision = altfuncs.playerrev(page_url)
 html = altfuncs.gethtml(page_url)
 

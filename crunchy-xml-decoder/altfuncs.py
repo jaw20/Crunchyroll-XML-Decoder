@@ -29,7 +29,8 @@ def config():
     lang = langd[lang]
     lang2 = langd[lang2]
     forcesub = configr.getboolean('SETTINGS', 'forcesubtitle')
-    return [lang, lang2, forcesub]
+    forcesub = configr.getboolean('SETTINGS', 'forceusa')
+    return [lang, lang2, forcesub, forceusa]
 
 
 def playerrev(url):
@@ -48,16 +49,18 @@ def playerrev(url):
 
 
 def gethtml(url):
+    global forceusa
     with open('cookies') as f:
         cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
         session = requests.session()
         session.cookies = cookies
         del session.cookies['c_visitor']
-        # try:
-            # session.cookies['sess_id'] = requests.get('http://www.crunblocker.com/sess_id.php').text
-        # except:
-            # sleep(10)  # sleep so we don't overload crunblocker
-            # session.cookies['sess_id'] = requests.get('http://www.crunblocker.com/sess_id.php').text
+        if forceusa:
+            try:
+                session.cookies['sess_id'] = requests.get('http://www.crunblocker.com/sess_id.php').text
+            except:
+                sleep(10)  # sleep so we don't overload crunblocker
+                session.cookies['sess_id'] = requests.get('http://www.crunblocker.com/sess_id.php').text
     parts = urlparse.urlsplit(url)
     if not parts.scheme or not parts.netloc:
         print 'Apparently not a URL'

@@ -30,6 +30,8 @@ echo language2 = English>>settings.ini
 echo:>>settings.ini
 echo # Set this if you want to use --forced-track rather than --default-track for subtitle>>settings.ini
 echo forcesubtitle = False>>settings.ini
+echo # Set this if you want to use a US session ID>>settings.ini
+echo forceusa = False>>settings.ini
 )
 :_starthere
 echo ____________________________________
