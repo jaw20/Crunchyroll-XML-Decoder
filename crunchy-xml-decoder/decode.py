@@ -28,7 +28,7 @@ try:
 except IndexError:
     page_url = raw_input('Please enter Crunchyroll video URL:\n')
 
-lang1, lang2 = altfuncs.config()
+lang1, lang2, forcesub, forceusa = altfuncs.config()
 player_revision = altfuncs.playerrev(page_url)
 html = altfuncs.gethtml(page_url)
 
