@@ -45,7 +45,7 @@ if __name__ == '__main__':
     try:
         if sys.argv[1][0] == 'y':
             username = raw_input(u'Username: ')
-            password = getpass()
+            password = getpass('Password(don\'t worry the password are typing but hidden:')
     except IndexError:
         username = ''
         password = ''

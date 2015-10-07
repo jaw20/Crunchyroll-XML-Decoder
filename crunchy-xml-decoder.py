@@ -43,7 +43,7 @@ if not os.path.exists(".\\settings.ini"):
 if not os.path.exists(".\\cookies"):
     if raw_input(u'Do you have an account [Y/N]?').lower() == 'y':
         username = raw_input(u'Username: ')
-        password = getpass()
+        password = getpass('Password(don\'t worry the password are typing but hidden:')
         login.login(username, password)
     else:
         login.login('', '')
@@ -112,7 +112,7 @@ def makechoise():
         decode.decode(raw_input('Please enter Crunchyroll video URL:\n'))
     elif seleccion == 3 :
         username = raw_input(u'Username: ')
-        password = getpass()
+        password = getpass('Password(don\'t worry the password are typing but hidden:')
         login.login(username, password)
         makechoise()
     elif seleccion == 4 :
