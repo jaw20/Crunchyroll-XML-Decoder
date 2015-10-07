@@ -2,7 +2,7 @@ crunchy-xml-decoder
 ===================
 
 Requires PyCrypto (http://www.voidspace.org.uk/python/modules.shtml#pycrypto) and lxml (https://pypi.python.org/pypi/lxml/3.2.5)
-
+if crunchy-xml-decoder could automatically install PyCrypto and lxml use the above link to download manually 
 
 
 This is a composite of various scripts required to download video files from CrunchyRoll 
@@ -13,17 +13,17 @@ INSTRUCTIONS:
 
     Pre-Setup (Only need to do these once.):
     1.  Install Python 2.7.5.
-    2.  Set your default video resolution and language in "settings.ini".
-    3.  If a premium member, run "_make-cookies.bat" and sign in.
+    2.  Run crunchy-xml-decoder.bat or crunchy-xml-decoder.py to generate necessary files (settings.ini and cookies)
+    3.  choices	from the option 
 
     Per-Video Process:
     1.  Copy the URL of the CrunchyRoll video you want to download from your web browser
-    2.  Run "_start.bat"
+    2.  Run crunchy-xml-decoder.bat or crunchy-xml-decoder.py choice 1 and paste link
     8.  Download will start automatically. Everything is automated.
     11. Browse to the 'export' folder to view the completed file.
 
     SPECIAL NOTE: There is another batch file in the _run folder..
-        _start_subs-only.bat
+        Run crunchy-xml-decoder.bat or crunchy-xml-decoder.py choice 2 and paste link
             Just want the subtitles to an episode? OK.. fair 'nuff. Use this.
 
 
