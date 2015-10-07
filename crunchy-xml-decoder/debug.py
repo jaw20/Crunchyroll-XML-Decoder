@@ -7,6 +7,7 @@ import subprocess
 import sys
 import HTMLParser
 import altfuncs
+import ultimate
 
 from bs4 import BeautifulSoup
 from crunchyDec import CrunchyDec
@@ -69,7 +70,7 @@ sys.settrace(traceit)
 
 
 	
-import ultimate
 
+ultimate.ultimate('', '', '')
 debugfile.close()
 #ultimate()
