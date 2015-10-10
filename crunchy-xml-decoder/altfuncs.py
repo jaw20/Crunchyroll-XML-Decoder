@@ -32,7 +32,9 @@ def config():
     forcesub = configr.getboolean('SETTINGS', 'forcesubtitle')
     global forceusa
     forceusa = configr.getboolean('SETTINGS', 'forceusa')
-    return [lang, lang2, forcesub, forceusa]
+    global localizecookies
+    localizecookies = configr.getboolean('SETTINGS', 'localizecookies')
+    return [lang, lang2, forcesub, forceusa, localizecookies]
 
 
 def playerrev(url):
@@ -56,6 +58,10 @@ def gethtml(url):
         session = requests.session()
         session.cookies = cookies
         del session.cookies['c_visitor']
+        if not forceusa and localizecookies:
+            session.cookies['c_locale']={u'Español (Espana)' : 'esES', u'Français (France)' : 'frFR', u'Português (Brasil)' : 'ptBR',
+                                        u'English' : 'enUS', u'Español' : 'esLA', u'Türkçe' : 'enUS', u'Italiano' : 'itIT',
+                                        u'العربية' : 'arME' , u'Deutsch' : 'deDE'}[lang]
         if forceusa:
             try:
                 session.cookies['sess_id'] = requests.get('http://www.crunblocker.com/sess_id.php').text
@@ -88,6 +94,10 @@ def getxml(req, med_id):
         session = requests.session()
         session.cookies = cookies
         del session.cookies['c_visitor']
+        if not forceusa and localizecookies:
+            session.cookies['c_locale']={u'Español (Espana)' : 'esES', u'Français (France)' : 'frFR', u'Português (Brasil)' : 'ptBR',
+                                        u'English' : 'enUS', u'Español' : 'esLA', u'Türkçe' : 'enUS', u'Italiano' : 'itIT',
+                                        u'العربية' : 'arME' , u'Deutsch' : 'deDE'}[lang]
         if forceusa:
             try:
                 session.cookies['sess_id'] = requests.get('http://www.crunblocker.com/sess_id.php').text

@@ -34,6 +34,9 @@ forcesubtitle = False
 
 # Set this if you want to use a US session ID
 forceusa = False
+
+# Set this if you want to Localize the cookies (this option is under testing and may generate some problem and it willnot work with -forceusa- option)
+localizecookies = false
 '''
     open('.\\settings.ini', 'w').write(dsettings.encode('utf-8'))
 
