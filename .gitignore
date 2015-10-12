@@ -1,6 +1,8 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+cookies
+settings.ini
 
 # C extensions
 *.so
@@ -18,13 +20,10 @@ lib64/
 parts/
 sdist/
 var/
-export/
-crunchy-xml-decoder/Crypto/
-crunchy-xml-decoder/lxml/
-temp/
 *.egg-info/
 .installed.cfg
 *.egg
+export/*
 
 # Installer logs
 pip-log.txt
@@ -58,7 +57,3 @@ docs/_build/
 
 # Other
 .idea/
-cookies
-debug.html
-settings.ini
-queue.txt
