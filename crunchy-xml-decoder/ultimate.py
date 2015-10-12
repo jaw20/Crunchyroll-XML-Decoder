@@ -197,7 +197,7 @@ Booting up...
 
     #lang1, lang2 = altfuncs.config()
     #lang1, lang2, forcesub = altfuncs.config()
-    lang1, lang2, forcesub, forceusa, localizecookies = altfuncs.config()
+    lang1, lang2, forcesub, forceusa, localizecookies, vquality = altfuncs.config()
     player_revision = altfuncs.playerrev(page_url)
     html = altfuncs.gethtml(page_url)
 

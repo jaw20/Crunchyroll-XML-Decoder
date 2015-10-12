@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 import sys
 import argparse
 import os
@@ -8,6 +10,7 @@ import functtest
 import ultimate
 import login
 import decode
+import altfuncs
 
 import time
 
@@ -15,33 +18,39 @@ import time
 if not os.path.exists("export"):
     os.makedirs("export")
 
-def defaultsettings():
+iquality = 'highest'
+ilang1 = 'English'
+ilang2 = 'English'
+iforcesub = False
+iforceusa = False
+ilocalizecookies = False
+def defaultsettings(vvquality, vlang1, vlang2, vforcesub, vforceusa, vlocalizecookies):
     dsettings='''[SETTINGS]
 # Set this to the preferred quality. Possible values are: "android" (hard-subbed), "360p", "480p", "720p", "1080p", or "highest" for highest available.
 # Note that any quality higher than 360p still requires premium, unless it's available that way for free (some first episodes).
 # We're not miracle workers.
-video_quality = highest
+video_quality = '''+vvquality+'''
 
 # Set this to the desired subtitle language. If the subtitles aren't available in that language, it reverts to the second language option (below).
 # Available languages: English, Espanol, Espanol_Espana, Francais, Portugues, Turkce, Italiano, Arabic, Deutsch
-language = English
+language = '''+vlang1+'''
 
 # If the first language isn't available, what language would you like as a backup? Only if then they aren't found, then it goes to English as default
-language2 = English
+language2 = '''+vlang2+'''
 
 # Set this if you want to use --forced-track rather than --default-track for subtitle
-forcesubtitle = False
+forcesubtitle = '''+str(vforcesub)+'''
 
 # Set this if you want to use a US session ID
-forceusa = False
+forceusa = '''+str(vforceusa)+'''
 
 # Set this if you want to Localize the cookies (this option is under testing and may generate some problem and it willnot work with -forceusa- option)
-localizecookies = false
+localizecookies = '''+str(vlocalizecookies)+'''
 '''
     open('.\\settings.ini', 'w').write(dsettings.encode('utf-8'))
 
 if not os.path.exists(".\\settings.ini"):
-    defaultsettings()
+    defaultsettings(iquality, ilang1, ilang2, iforcesub, iforceusa, ilocalizecookies)
 	
 if not os.path.exists(".\\cookies"):
     if raw_input(u'Do you have an account [Y/N]?').lower() == 'y':
@@ -86,6 +95,158 @@ def queueu(queuepath):
                             new_line_2=new_line_
                     open(queuepath, 'w').write(new_line_2)
 
+def Languages_(Varname_):
+    seleccion = 0
+    if Varname_ == 'slang1':
+        print '''Set this to the desired subtitle language. If the subtitles aren\'t available in that language, it reverts to the Secondary language option'''
+    if Varname_ == 'slang2':
+        print '''If the Primary language isn't available, what language would you like as a backup? Only if then they aren't found, then it goes to English as default'''
+    print '''Available Languages:
+0.- English
+1.- Espanol
+2.- Espanol (Espana)
+3.- Francais
+4.- Portugues
+5.- Turkce
+6.- Italiano
+7.- Arabic
+8.- Deutsch
+'''
+    try:
+        seleccion = int(input("> "))
+    except:
+        print "ERROR: Invalid option."
+        Languages_()
+    if seleccion == 1 :
+        return 'Espanol'
+    elif seleccion == 2 :
+        return 'Espanol_Espana'
+    elif seleccion == 3 :
+        return 'Francais'
+    elif seleccion == 4 :
+        return 'Portugues'
+    elif seleccion == 5 :
+        return 'Turkce'
+    elif seleccion == 6 :
+        return 'Italiano'
+    elif seleccion == 7 :
+        return 'Arabic'
+    elif seleccion == 8 :
+        return 'Deutsch'
+    elif seleccion == 0 :
+        return 'English'
+    else:
+        print "ERROR: Invalid option."
+        Languages_()
+
+def videoquality_():
+    slang1, slang2, sforcesub, sforceusa, slocalizecookies, vquality = altfuncs.config()
+    seleccion = 5
+    print '''Set This To The Preferred Quality:
+0.- android (hard-subbed)
+1.- 360p
+2.- 480p
+3.- 720p
+4.- 1080p
+5.- highest
+
+Note: Any Quality Higher Than 360p Still Requires Premium, Unless It's Available That Way For Free (Some First Episodes).
+We're Not Miracle Workers.
+'''
+    try:
+        seleccion = int(input("> "))
+    except:
+        print "ERROR: Invalid option."
+        videoquality_()
+    if seleccion == 0 :
+        return 'android'
+    elif seleccion == 1 :
+        return '360p'
+    elif seleccion == 2 :
+        return '480p'
+    elif seleccion == 3 :
+        return '720p'
+    elif seleccion == 4 :
+        return '1080p'
+    elif seleccion == 5 :
+        return 'highest'
+    else:
+        print "ERROR: Invalid option."
+        videoquality_()
+def settings_():
+    slang1, slang2, sforcesub, sforceusa, slocalizecookies, vquality = altfuncs.config()
+    slang1 = {u'Español (Espana)' : 'Espanol_Espana', u'Français (France)' : 'Francais', u'Português (Brasil)' : 'Portugues',
+            u'English' : 'English', u'Español' : 'Espanol', u'Türkçe' : 'Turkce', u'Italiano' : 'Italiano',
+            u'العربية' : 'Arabic', u'Deutsch' : 'Deutsch'}[slang1]
+    slang2 = {u'Español (Espana)' : 'Espanol_Espana', u'Français (France)' : 'Francais', u'Português (Brasil)' : 'Portugues',
+            u'English' : 'English', u'Español' : 'Espanol', u'Türkçe' : 'Turkce', u'Italiano' : 'Italiano',
+            u'العربية' : 'Arabic', u'Deutsch' : 'Deutsch'}[slang2]
+    if slang1 == 'Espanol_Espana':
+        slang1_ = 'Espanol (Espana)'
+    else:
+        slang1_ = slang1
+    if slang2 == 'Espanol_Espana':
+        slang2_ = 'Espanol (Espana)'
+    else:
+        slang2_ = slang2
+    seleccion = 0
+    print '''Options:
+0.- Exit
+1.- Video Quality = '''+vquality+'''
+2.- Primary Language = '''+slang1_+'''
+3.- Secondary Language = '''+slang2_+'''
+4.- Force Subtitle = '''+str(sforcesub)+'''		#Use --forced-track in Subtitle
+5.- USA Proxy = '''+str(sforceusa)+'''			#use a US session ID
+6.- Localize cookies = '''+str(slocalizecookies)+'''		#Localize the cookies (Experiment)
+7.- Restore Default Settings
+'''
+    try:
+        seleccion = int(input("> "))
+    except:
+        print "ERROR: Invalid option."
+        settings_()
+    if seleccion == 1 :
+        vquality = videoquality_()
+        defaultsettings(vquality, slang1, slang2, sforcesub, sforceusa, slocalizecookies)
+        settings_()
+    elif seleccion == 2 :
+        slang1 = Languages_('slang1')
+        defaultsettings(vquality, slang1, slang2, sforcesub, sforceusa, slocalizecookies)
+        settings_()
+    elif seleccion == 3 :
+        slang2 = Languages_('slang2')
+        defaultsettings(vquality, slang1, slang2, sforcesub, sforceusa, slocalizecookies)
+        settings_()
+    elif seleccion == 4 :
+        if sforcesub:
+            sforcesub = False
+        else:
+            sforcesub = True
+        defaultsettings(vquality, slang1, slang2, sforcesub, sforceusa, slocalizecookies)
+        settings_()
+    elif seleccion == 5 :
+        if sforceusa:
+            sforceusa = False
+        else:
+            sforceusa = True
+        defaultsettings(vquality, slang1, slang2, sforcesub, sforceusa, slocalizecookies)
+        settings_()
+    elif seleccion == 6 :
+        if slocalizecookies:
+            slocalizecookies = False
+        else:
+            slocalizecookies = True
+        defaultsettings(vquality, slang1, slang2, sforcesub, sforceusa, slocalizecookies)
+        settings_()
+    elif seleccion == 7 :
+        defaultsettings(iquality, ilang1, ilang2, iforcesub, iforceusa, ilocalizecookies)
+        settings_()
+    elif seleccion == 0 :
+        pass
+    else:
+        print "ERROR: Invalid option."
+        settings_()
+
 def makechoise():
     seleccion = 0
     print '''Options:
@@ -95,7 +256,7 @@ def makechoise():
 3.- Login
 4.- Login As Guest
 5.- Run Queue
-6.- Restore default settings
+6.- Settings
 '''
     try:
         seleccion = int(input("> "))
@@ -124,7 +285,7 @@ def makechoise():
     elif seleccion == 5 :
         queueu('.\\queue.txt')
     elif seleccion == 6 :
-        defaultsettings()
+        settings_()
         makechoise()
     elif seleccion == 7 :
         import debug
@@ -167,7 +328,7 @@ if arg.subs_only:
         decode.decode(raw_input('Please enter Crunchyroll video URL:\n'))
     sys.exit()
 if arg.default_settings:
-    defaultsettings()
+    defaultsettings(iquality, ilang1, ilang2, iforcesub, iforceusa, ilocalizecookies)
     sys.exit()
 if arg.queue:
     queueu(arg.queue)
