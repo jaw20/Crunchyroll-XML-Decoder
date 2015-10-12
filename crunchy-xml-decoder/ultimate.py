@@ -260,7 +260,9 @@ Booting up...
     else:
         page_url2 = page_url
         video()
-        heightp = subprocess.Popen('"video-engine\MediaInfo.exe" --inform=Video;%Height% ".\export\\' + title + '.flv"' ,shell=True , stdout=subprocess.PIPE).stdout.read()
+        #heightp = subprocess.Popen('"video-engine\MediaInfo.exe" --inform=Video;%Height% ".\export\\' + title + '.flv"' ,shell=True , stdout=subprocess.PIPE).stdout.read()
+        heightp = {'71' : 'android', '60' : '360p', '61' : '480p',
+                 '62' : '720p', '80' : '1080p', '0' : 'highest'}[xmlconfig.find('video_encode_quality').string]
         subtitles(title)
         subtitlefilecode=''
         #shutil.move(title + '.flv', os.path.join(os.getcwd(), 'export', ''))
@@ -295,7 +297,7 @@ Booting up...
     #        subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" --language 1:jpn -a 1 -d 0 ' +
     #                        '".\export\\' + title + '.flv" --language 0:' + sublang + ' -s 0 ".\export\\'+title+'.ass"')
     #        print '"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" --language 0:jpn --language 1:jpn -a 1 -d 0 ' + '".\export\\' + title + '.flv"' + subtitlefilecode +' --title "' + title +'"'
-            mkvcmd='"video-engine\mkvmerge.exe" -o ".\export\\' + title + '[' + heightp.strip() +'p].mkv" --language 0:jpn --language 1:jpn -a 1 -d 0 ' + '".\export\\' + title + '.flv"' + subtitlefilecode +' --title "' + title +'"'
+            mkvcmd='"video-engine\mkvmerge.exe" -o ".\export\\' + title + '[' + heightp.strip() +'].mkv" --language 0:jpn --language 1:jpn -a 1 -d 0 ' + '".\export\\' + title + '.flv"' + subtitlefilecode +' --title "' + title +'"'
     #        print mkvcmd
             subprocess.call(mkvcmd)
         print 'Merge process complete'
