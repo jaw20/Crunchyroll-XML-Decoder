@@ -4,7 +4,8 @@ import re
 import platform
 import subprocess
 import shutil
-
+import wget
+import zipfile
 
 
 python_bit_=re.findall("[0-9][0-9] bit",sys.version).pop()
@@ -72,16 +73,16 @@ if Crypto_link_ or lxml_link_:
         os.makedirs("temp")
 if Crypto_link_:
     print Crypto_link_
-    subprocess.call('video-engine\wget.exe -c --no-check-certificate -O "temp\crypto.exe" '+ Crypto_link_)
+    wget.download(Crypto_link_,'.\\temp\\crypto.exe')
+    print ''
 if lxml_link_:
     print lxml_link_
-    subprocess.call('video-engine\wget.exe -c --no-check-certificate -O "temp\lxml.exe" '+ lxml_link_)
+    wget.download(lxml_link_,'.\\temp\\lxml.exe')
+    print ''
 if Crypto_link_ or lxml_link_:
     print "Extracting....."
-    try:
-        subprocess.call(bin_dir__ + '\\video-engine\\7z_64.exe x -otemp\ temp\ ', stdout=open(os.devnull, 'w'))
-    except:
-        subprocess.call(bin_dir__ + '\\video-engine\\7z.exe x -otemp\ temp\ ', stdout=open(os.devnull, 'w'))
+    zipfile.ZipFile('.\\temp\\crypto.exe', "r").extractall(".\\temp\\")
+    zipfile.ZipFile('.\\temp\\lxml.exe', "r").extractall(".\\temp\\")
 
 if os.path.exists("temp"):
     if os.path.exists(".\\temp\\PLATLIB\\Crypto"):
