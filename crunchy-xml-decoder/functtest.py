@@ -6,7 +6,19 @@ import subprocess
 import shutil
 import wget
 import zipfile
+import math
 
+def unzip_(filename_,out):
+    zf = zipfile.ZipFile(filename_)
+    uncompress_size = sum((file.file_size for file in zf.infolist()))
+    extracted_size = 0
+    for file in zf.infolist():
+        extracted_size += file.file_size
+        percentage = extracted_size * 100/uncompress_size
+        avail_dots = 73
+        shaded_dots = int(math.floor(float(extracted_size) / uncompress_size * avail_dots))
+        sys.stdout.write("\r" + '[' + '*'*shaded_dots + '-'*(avail_dots-shaded_dots) + '] %'+str(percentage))
+        zf.extract(file,out)
 
 python_bit_=re.findall("[0-9][0-9] bit",sys.version).pop()
 python_version_=re.findall("[0-9]\.[0-9]",sys.version).pop()
@@ -72,17 +84,18 @@ if Crypto_link_ or lxml_link_:
     if not os.path.exists("temp"):
         os.makedirs("temp")
 if Crypto_link_:
-    print Crypto_link_
+    print 'Downloading link:'+Crypto_link_
     wget.download(Crypto_link_,'.\\temp\\crypto.exe')
     print ''
 if lxml_link_:
-    print lxml_link_
+    print 'Downloading link:'+lxml_link_
     wget.download(lxml_link_,'.\\temp\\lxml.exe')
     print ''
 if Crypto_link_ or lxml_link_:
-    print "Extracting....."
-    zipfile.ZipFile('.\\temp\\crypto.exe', "r").extractall(".\\temp\\")
-    zipfile.ZipFile('.\\temp\\lxml.exe', "r").extractall(".\\temp\\")
+    print "Crypto Extracting....."
+    unzip_('.\\temp\\crypto.exe','.\\temp\\')
+    print "Lxml Extracting....."
+    unzip_('.\\temp\\lxml.exe','.\\temp\\')
 
 if os.path.exists("temp"):
     if os.path.exists(".\\temp\\PLATLIB\\Crypto"):
