@@ -59,7 +59,10 @@ if not os.path.exists(".\\cookies"):
         login.login(username, password)
     else:
         login.login('', '')
-
+else:
+    userstatus = login.getuserstatus()
+    print 'User Name='+userstatus[1]
+    print 'Membership Type='+userstatus[0]
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#(Argument Parser)#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 parser = argparse.ArgumentParser()
