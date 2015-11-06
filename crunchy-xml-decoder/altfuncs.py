@@ -40,7 +40,7 @@ def config():
 def playerrev(url):
     global player_revision 
 
-    revision_regex = r"swfobject.embedSWF\(\"(.+)'(?P<revision>([0-9]\.)+[0-9]+)'(.+)\)"
+    revision_regex = r"swfobject.embedSWF\(\"(?:.+)'(?P<revision>[\d.]+)'(?:.+)\)"
     try:
         player_revision = re.search(revision_regex, gethtml(url)).group("revision")
     except IndexError:

@@ -363,7 +363,8 @@ for i in mangalist:
             if not p['locale'] or not p['locale'][userdata['API_LOCALE']]['encrypted_composed_image_url']:
                 image = session.get(url=p['image_url'], timeout=16).content
             else:
-                image = session.get(url=p['locale'][userdata['API_LOCALE']]['encrypted_composed_image_url'], timeout=16).content
+                image = session.get(url=p['locale'][userdata['API_LOCALE']]['encrypted_composed_image_url'],
+                                    timeout=16).content
             if len(image) == 0:
                 print 'Page '+str(ind)+' is missing, skipping.'
                 ind += 1
