@@ -38,14 +38,16 @@ def config():
 
 
 def playerrev(url):
-    global player_revision
+    global player_revision 
+
+    revision_regex = r"swfobject.embedSWF\(\"(.+)'(?P<revision>([0-9]\.)+[0-9]+)'(.+)\)"
     try:
-        player_revision = re.findall(r'flash\\/(.+)\\/StandardVideoPlayer', gethtml(url))[0]
+        player_revision = re.search(revision_regex, gethtml(url)).group("revision")
     except IndexError:
         try:
             url += '?skip_wall=1'  # perv
             html = gethtml(url)
-            player_revision = re.findall(r'flash\\/(.+)\\/StandardVideoPlayer', html)[0]
+            player_revision = re.search(revision_regex, html).group("revision")
         except IndexError:
             open('debug.html', 'w').write(html.encode('utf-8'))
             sys.exit('Sorry, but it looks like something went wrong with accessing the Crunchyroll page. Please make an issue on GitHub and attach debug.html which should be in the folder.')
