@@ -21,6 +21,7 @@ from crunchyDec import CrunchyDec
 from unidecode import unidecode
 # ----------
 
+#onlymainsub=False
 
 def video():
     print 'Downloading video...'
@@ -105,7 +106,7 @@ def subtitles(eptitle):
     sub_id3 = [word.replace('[Deutsch]','deu') for word in sub_id3]
     sub_id3 = [word.replace('[Portugues (Brasil)]','por') for word in sub_id3]
     sub_id3 = [word.replace('[Francais (France)]','fre') for word in sub_id3]
-    sub_id3 = [word.replace('[Espanol (Espana)]','spa') for word in sub_id3]
+    sub_id3 = [word.replace('[Espanol (Espana)]','spa_spa') for word in sub_id3]
     sub_id3 = [word.replace('[Espanol]','spa') for word in sub_id3]
     sub_id3 = [word.replace('[Italiano]','ita') for word in sub_id3]
     sub_id3 = [word.replace('[l`rby@]','ara') for word in sub_id3]
@@ -115,7 +116,7 @@ def subtitles(eptitle):
     sub_id5 = [word.replace('[Deutsch]','deu') for word in sub_id5]
     sub_id5 = [word.replace('[Portugues (Brasil)]','por') for word in sub_id5]
     sub_id5 = [word.replace('[Francais (France)]','fre') for word in sub_id5]
-    sub_id5 = [word.replace('[Espanol (Espana)]','spa') for word in sub_id5]
+    sub_id5 = [word.replace('[Espanol (Espana)]','spa_spa') for word in sub_id5]
     sub_id5 = [word.replace('[Espanol]','spa') for word in sub_id5]
     sub_id5 = [word.replace('[Italiano]','ita') for word in sub_id5]
     sub_id5 = [word.replace('[l`rby@]','ara') for word in sub_id5]
@@ -197,7 +198,7 @@ Booting up...
 
     #lang1, lang2 = altfuncs.config()
     #lang1, lang2, forcesub = altfuncs.config()
-    lang1, lang2, forcesub, forceusa, localizecookies, vquality = altfuncs.config()
+    lang1, lang2, forcesub, forceusa, localizecookies, vquality, onlymainsub = altfuncs.config()
     player_revision = altfuncs.playerrev(page_url)
     html = altfuncs.gethtml(page_url)
 
@@ -273,11 +274,13 @@ Booting up...
             subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '[' + heightp.strip() +'p].mkv" --language 1:jpn -a 1 -d 0 ' +
                             '".\export\\' + title + '.flv"' +' --title "' + title +'"')
         else:
-            sublang = {u'Español (Espana)': 'spa', u'Français (France)': 'fre', u'Português (Brasil)': 'por',
+            sublang = {u'Español (Espana)': 'spa_spa', u'Français (France)': 'fre', u'Português (Brasil)': 'por',
                        u'English': 'eng', u'Español': 'spa', u'Türkçe': 'tur', u'Italiano': 'ita',
                        u'العربية': 'ara', u'Deutsch': 'deu'}[lang]
     #		defaulttrack = False
-    #        print sublang
+            #print lang.encode('utf-8')
+            #print sub_id5
+            #print sub_id6
             for i in sub_id2:
 	    		defaultsub=''
     			sublangc=sub_id5.pop(0)
@@ -293,12 +296,17 @@ Booting up...
 	    				defaultsub=' --default-track 0:yes --forced-track 0:yes'
 	    			else:
 		    			defaultsub=' --default-track 0:no --forced-track 0:no'
-	    		subtitlefilecode=subtitlefilecode+' --language 0:' + sublangc + defaultsub +' --track-name 0:"' + sublangn + '" -s 0 ".\export\\'+title+'['+sublangc+']'+sublangn+'.ass"'
+	    		if not onlymainsub:
+    				subtitlefilecode=subtitlefilecode+' --language 0:' + sublangc.replace('spa_spa','spa') + defaultsub +' --track-name 0:"' + sublangn + '" -s 0 ".\export\\'+title+'['+sublangc+']'+sublangn+'.ass"'
+	    		else:
+    				if sublangc == sublang:
+	    				subtitlefilecode=subtitlefilecode+' --language 0:' + sublangc.replace('spa_spa','spa') + defaultsub +' --track-name 0:"' + sublangn + '" -s 0 ".\export\\'+title+'['+sublangc+']'+sublangn+'.ass"'
     #        subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" --language 1:jpn -a 1 -d 0 ' +
     #                        '".\export\\' + title + '.flv" --language 0:' + sublang + ' -s 0 ".\export\\'+title+'.ass"')
     #        print '"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" --language 0:jpn --language 1:jpn -a 1 -d 0 ' + '".\export\\' + title + '.flv"' + subtitlefilecode +' --title "' + title +'"'
             mkvcmd='"video-engine\mkvmerge.exe" -o ".\export\\' + title + '[' + heightp.strip() +'].mkv" --language 0:jpn --language 1:jpn -a 1 -d 0 ' + '".\export\\' + title + '.flv"' + subtitlefilecode +' --title "' + title +'"'
     #        print mkvcmd
+            #print subtitlefilecode
             subprocess.call(mkvcmd)
         print 'Merge process complete'
         subs_only = False

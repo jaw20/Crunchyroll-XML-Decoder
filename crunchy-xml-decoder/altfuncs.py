@@ -34,7 +34,8 @@ def config():
     forceusa = configr.getboolean('SETTINGS', 'forceusa')
     global localizecookies
     localizecookies = configr.getboolean('SETTINGS', 'localizecookies')
-    return [lang, lang2, forcesub, forceusa, localizecookies, quality]
+    onlymainsub = configr.getboolean('SETTINGS', 'onlymainsub')
+    return [lang, lang2, forcesub, forceusa, localizecookies, quality, onlymainsub]
 
 
 def playerrev(url):
