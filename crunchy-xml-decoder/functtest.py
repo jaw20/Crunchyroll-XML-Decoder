@@ -20,7 +20,13 @@ def unzip_(filename_,out):
         sys.stdout.write("\r" + '[' + '*'*shaded_dots + '-'*(avail_dots-shaded_dots) + '] %'+str(percentage))
         zf.extract(file,out)
 
-python_bit_=re.findall("[0-9][0-9] bit",sys.version).pop()
+try:
+    python_bit_=re.findall("[0-9][0-9] bit",sys.version).pop()
+except:
+    if sys.maxsize > 2**32:
+        python_bit_="64 bit"
+    else:
+        python_bit_="32 bit"
 python_version_=re.findall("[0-9]\.[0-9]",sys.version).pop()
 Crypto_link_=""
 lxml_link_=""
