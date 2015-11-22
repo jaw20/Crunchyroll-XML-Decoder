@@ -32,8 +32,8 @@ Crypto_link_=""
 lxml_link_=""
 print "python version="+re.findall("[0-9]\.[0-9]\.[0-9]",sys.version).pop()+" "+python_bit_
 print "OS Version="+platform.platform().replace("-"," ")
-print "System Type="+os.environ['PROCESSOR_ARCHITECTURE']
-
+#print "System Type="+os.environ['PROCESSOR_ARCHITECTURE']
+print "System Type="+platform.machine()
 
 if os.path.exists(".\\video-engine\\rtmpdump.exe"):
     bin_dir__="."
