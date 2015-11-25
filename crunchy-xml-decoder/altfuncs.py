@@ -38,21 +38,21 @@ def config():
     return [lang, lang2, forcesub, forceusa, localizecookies, quality, onlymainsub]
 
 
-def playerrev(url):
-    global player_revision 
-
-    revision_regex = r"swfobject.embedSWF\(\"(?:.+)'(?P<revision>[\d.]+)'(?:.+)\)"
-    try:
-        player_revision = re.search(revision_regex, gethtml(url)).group("revision")
-    except IndexError:
-        try:
-            url += '?skip_wall=1'  # perv
-            html = gethtml(url)
-            player_revision = re.search(revision_regex, html).group("revision")
-        except IndexError:
-            open('debug.html', 'w').write(html.encode('utf-8'))
-            sys.exit('Sorry, but it looks like something went wrong with accessing the Crunchyroll page. Please make an issue on GitHub and attach debug.html which should be in the folder.')
-    return player_revision
+#def playerrev(url):
+#    global player_revision 
+#
+#    revision_regex = r"swfobject.embedSWF\(\"(?:.+)'(?P<revision>[\d.]+)'(?:.+)\)"
+#    try:
+#        player_revision = re.search(revision_regex, gethtml(url)).group("revision")
+#    except IndexError:
+#        try:
+#            url += '?skip_wall=1'  # perv
+#            html = gethtml(url)
+#            player_revision = re.search(revision_regex, html).group("revision")
+#        except IndexError:
+#            open('debug.html', 'w').write(html.encode('utf-8'))
+#            sys.exit('Sorry, but it looks like something went wrong with accessing the Crunchyroll page. Please make an issue on GitHub and attach debug.html which should be in the folder.')
+#    return player_revision
 
 
 def gethtml(url):
@@ -107,7 +107,7 @@ def getxml(req, med_id):
             except:
                 sleep(10)  # sleep so we don't overload crunblocker
                 session.cookies['sess_id'] = requests.get('http://www.crunblocker.com/sess_id.php').text
-    headers = {'Referer': 'http://static.ak.crunchyroll.com/flash/' + player_revision + '/StandardVideoPlayer.swf',
+    headers = {'Referer': 'http://static.ak.crunchyroll.com/versioned_assets/ChromelessPlayerApp.17821a0e.swf',
                'Host': 'www.crunchyroll.com', 'Content-type': 'application/x-www-form-urlencoded',
                'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; rv:26.0) Gecko/20100101 Firefox/26.0)'}
     res = session.post(url, params=payload, headers=headers)

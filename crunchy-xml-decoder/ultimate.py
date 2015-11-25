@@ -25,10 +25,14 @@ from unidecode import unidecode
 
 def video():
     print 'Downloading video...'
-    cmd = '.\\video-engine\\rtmpdump -r "' + url1 + '" -a "' \
-          + url2 + '" -f "WIN 11,8,800,50" -m 15 -W "http://static.ak.crunchyroll.com/flash/' \
-          + player_revision + '/ChromelessPlayerApp.swf" -p "' + page_url2 + '" -y "' + filen + \
-          '" -o ".\\export\\' + title + '.flv"'
+    cmd = ['.\\video-engine\\rtmpdump',
+           '-r', url1, '-a', url2,
+           '-f', 'WIN 11,8,800,50',
+           '-m', '15',
+           '-W', 'http://static.ak.crunchyroll.com/versioned_assets/ChromelessPlayerApp.17821a0e.swf',
+           '-p', page_url2,
+           '-y', filen,
+           '-o', '.\\export\\{}.flv'.format(title)]
     error = subprocess.call(cmd)
     # error = 0
 
@@ -157,7 +161,8 @@ def subtitles(eptitle):
 # ----------
 
 def ultimate(page_url, seasonnum, epnum):
-    global url1, url2, filen, player_revision, title, media_id, lang1, lang2, hardcoded, forceusa, page_url2
+    global url1, url2, filen, title, media_id, lang1, lang2, hardcoded, forceusa, page_url2
+    #global player_revision
 
     print '''
 --------------------------
@@ -199,7 +204,7 @@ Booting up...
     #lang1, lang2 = altfuncs.config()
     #lang1, lang2, forcesub = altfuncs.config()
     lang1, lang2, forcesub, forceusa, localizecookies, vquality, onlymainsub = altfuncs.config()
-    player_revision = altfuncs.playerrev(page_url)
+    #player_revision = altfuncs.playerrev(page_url)
     html = altfuncs.gethtml(page_url)
 
     h = HTMLParser.HTMLParser()
