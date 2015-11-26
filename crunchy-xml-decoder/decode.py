@@ -40,7 +40,7 @@ Booting up...
         page_url = raw_input('Please enter Crunchyroll video URL:\n')
 
     lang1, lang2, forcesub, forceusa, localizecookies, vquality, onlymainsub = altfuncs.config()
-    player_revision = altfuncs.playerrev(page_url)
+    #player_revision = altfuncs.playerrev(page_url)
     html = altfuncs.gethtml(page_url)
 
     h = HTMLParser.HTMLParser()
