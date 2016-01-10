@@ -13,7 +13,7 @@ import re
 import shutil
 import subprocess
 import sys
-import HTMLParser
+#import HTMLParser
 
 import altfuncs
 from bs4 import BeautifulSoup
@@ -207,7 +207,7 @@ Booting up...
     #player_revision = altfuncs.playerrev(page_url)
     html = altfuncs.gethtml(page_url)
 
-    h = HTMLParser.HTMLParser()
+    #h = HTMLParser.HTMLParser()
     title = re.findall('<title>(.+?)</title>', html)[0].replace('Crunchyroll - Watch ', '')
     if len(os.getcwd()+'\\export\\'+title+'.flv') > 255:
         title = re.findall('^(.+?) \- ', title)[0]
