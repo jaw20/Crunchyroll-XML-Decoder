@@ -267,8 +267,7 @@ Booting up...
         page_url2 = page_url
         video()
         #heightp = subprocess.Popen('"video-engine\MediaInfo.exe" --inform=Video;%Height% ".\export\\' + title + '.flv"' ,shell=True , stdout=subprocess.PIPE).stdout.read()
-        heightp = {'71' : 'android', '60' : '360p', '61' : '480p',
-                 '62' : '720p', '80' : '1080p', '0' : 'highest'}[xmlconfig.find('video_encode_quality').string]
+        heightp = '360p' if xmlconfig.height.string == '368' else '{0}p'.format(xmlconfig.height.string)  # This is less likely to fail
         subtitles(title)
         subtitlefilecode=''
         #shutil.move(title + '.flv', os.path.join(os.getcwd(), 'export', ''))
@@ -276,7 +275,7 @@ Booting up...
 
         print 'Starting mkv merge'
         if hardcoded:
-            subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '[' + heightp.strip() +'p].mkv" --language 1:jpn -a 1 -d 0 ' +
+            subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '[' + heightp.strip() +'].mkv" --language 1:jpn -a 1 -d 0 ' +
                             '".\export\\' + title + '.flv"' +' --title "' + title +'"')
         else:
             sublang = {u'Español (Espana)': 'spa_spa', u'Français (France)': 'fre', u'Português (Brasil)': 'por',
