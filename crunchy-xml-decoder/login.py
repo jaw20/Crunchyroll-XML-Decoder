@@ -17,7 +17,7 @@ def getuserstatus(session=''):
     #print session.cookies #session = requests.session()
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0',
                'Connection': 'keep-alive'}
-    site = session.get('https://www.crunchyroll.com/acct/membership/', headers=headers, verify=True).text
+    site = session.get('https://www.crunchyroll.com/acct/membership', headers=headers, verify=True).text
     #open('tempfile','w').write(site).encoding('UTF-8')
     #print site.encode('utf-8')
     if re.search(re.escape('      ga(\'set\', \'dimension5\', \'registered\');'), site):
