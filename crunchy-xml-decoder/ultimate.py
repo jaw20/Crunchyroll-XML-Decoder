@@ -8,7 +8,7 @@ ORIGINAL SOURCE:
 """
 
 # import lxml
-import os
+import os.path
 import re
 import shutil
 import subprocess
@@ -25,14 +25,16 @@ from unidecode import unidecode
 
 def video():
     print 'Downloading video...'
-    cmd = ['.\\video-engine\\rtmpdump',
+    cmd = [os.path.join('video-engine', 'rtmpdump.exe'),
            '-r', url1, '-a', url2,
            '-f', 'WIN 11,8,800,50',
            '-m', '15',
            '-W', 'http://static.ak.crunchyroll.com/versioned_assets/ChromelessPlayerApp.17821a0e.swf',
            '-p', page_url2,
            '-y', filen,
-           '-o', '.\\export\\{}.flv'.format(title)]
+           '-o', os.path.join('export', '{}.flv'.format(title))]
+    if os.name != 'nt':
+        cmd.insert(0, 'wine')
     error = subprocess.call(cmd)
     # error = 0
 
@@ -55,7 +57,7 @@ def video():
             log = open('error.log', 'w')
         log.write(page_url2 + '\n')
         log.close()
-        os.remove('.\\' + title + '.flv"')
+        os.remove(title + '.flv"')
         sys.exit()
 
 # ----------
@@ -156,7 +158,7 @@ def subtitles(eptitle):
 			if formattedsubs is None:
 			    continue
 			#subfile = open(eptitle + '.ass', 'wb')
-			subfile = open('.\\export\\'+title+'['+sub_id3.pop(0)+']'+sub_id4.pop(0)+'.ass', 'wb')
+			subfile = open(os.path.join('export', title+'['+sub_id3.pop(0)+']'+sub_id4.pop(0)+'.ass'), 'wb')
 			subfile.write(formattedsubs.encode('utf-8-sig'))
 			subfile.close()		
 			#shutil.move(eptitle + '.ass', os.path.join(os.getcwd(), 'export', ''))
@@ -199,7 +201,7 @@ Booting up...
             else:
                 page_url = altfuncs.vidurl(page_url, False, False)
 
-    subprocess.call('title ' + page_url.replace('http://www.crunchyroll.com/', ''), shell=True)
+    #subprocess.call('title ' + page_url.replace('http://www.crunchyroll.com/', ''), shell=True)
 
     # ----------
 
@@ -211,7 +213,7 @@ Booting up...
 
     #h = HTMLParser.HTMLParser()
     title = re.findall('<title>(.+?)</title>', html)[0].replace('Crunchyroll - Watch ', '')
-    if len(os.getcwd()+'\\export\\'+title+'.flv') > 255:
+    if len(os.path.join('export', title+'.flv')) > 255:
         title = re.findall('^(.+?) \- ', title)[0]
 
     # title = h.unescape(unidecode(title)).replace('/', ' - ').replace(':', '-').
@@ -226,7 +228,7 @@ Booting up...
 
     ### End stolen code ###
 
-    subprocess.call('title ' + title.replace('&', '^&'), shell=True)
+    #subprocess.call('title ' + title.replace('&', '^&'), shell=True)
 
     # ----------
 
@@ -268,52 +270,48 @@ Booting up...
     else:
         page_url2 = page_url
         video()
-        #heightp = subprocess.Popen('"video-engine\MediaInfo.exe" --inform=Video;%Height% ".\export\\' + title + '.flv"' ,shell=True , stdout=subprocess.PIPE).stdout.read()
         heightp = '360p' if xmlconfig.height.string == '368' else '{0}p'.format(xmlconfig.height.string)  # This is less likely to fail
         subtitles(title)
-        subtitlefilecode=''
-        #shutil.move(title + '.flv', os.path.join(os.getcwd(), 'export', ''))
-
 
         print 'Starting mkv merge'
-        if hardcoded:
-            subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '[' + heightp.strip() +'].mkv" --language 1:jpn -a 1 -d 0 ' +
-                            '".\export\\' + title + '.flv"' +' --title "' + title +'"')
-        else:
+        mkvmerge = os.path.join("video-engine", "mkvmerge.exe")
+        filename_output = os.path.join("export", title + '[' + heightp.strip() +'].mkv')
+        video_input = os.path.join("export", title + '.flv')
+        subtitle_input = []
+        cmd = [mkvmerge, "-o", filename_output, '--language', '0:jpn', '--language', '1:jpn', '-a', '1', '-d', '0', video_input, '--title', title]
+        if os.name != 'nt':
+            cmd.insert(0, 'wine')
+        if not hardcoded:
             sublang = {u'Español (Espana)': 'spa_spa', u'Français (France)': 'fre', u'Português (Brasil)': 'por',
                        u'English': 'eng', u'Español': 'spa', u'Türkçe': 'tur', u'Italiano': 'ita',
                        u'العربية': 'ara', u'Deutsch': 'deu'}[lang]
-    #		defaulttrack = False
-            #print lang.encode('utf-8')
-            #print sub_id5
-            #print sub_id6
             for i in sub_id2:
-	    		defaultsub=''
-    			sublangc=sub_id5.pop(0)
-    			sublangn=sub_id6.pop(0)
-    #			print forcesub
-	    		if not forcesub:
-    				if sublangc == sublang:
-	    				defaultsub=' --default-track 0:yes --forced-track 0:no'
-	    			else:
-	    				defaultsub=' --default-track 0:no --forced-track 0:no'
-	    		else:
-	    			if sublangc == sublang:
-	    				defaultsub=' --default-track 0:yes --forced-track 0:yes'
-	    			else:
-		    			defaultsub=' --default-track 0:no --forced-track 0:no'
-	    		if not onlymainsub:
-    				subtitlefilecode=subtitlefilecode+' --language 0:' + sublangc.replace('spa_spa','spa') + defaultsub +' --track-name 0:"' + sublangn + '" -s 0 ".\export\\'+title+'['+sublangc+']'+sublangn+'.ass"'
-	    		else:
-    				if sublangc == sublang:
-	    				subtitlefilecode=subtitlefilecode+' --language 0:' + sublangc.replace('spa_spa','spa') + defaultsub +' --track-name 0:"' + sublangn + '" -s 0 ".\export\\'+title+'['+sublangc+']'+sublangn+'.ass"'
-    #        subprocess.call('"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" --language 1:jpn -a 1 -d 0 ' +
-    #                        '".\export\\' + title + '.flv" --language 0:' + sublang + ' -s 0 ".\export\\'+title+'.ass"')
-    #        print '"video-engine\mkvmerge.exe" -o ".\export\\' + title + '.mkv" --language 0:jpn --language 1:jpn -a 1 -d 0 ' + '".\export\\' + title + '.flv"' + subtitlefilecode +' --title "' + title +'"'
-            mkvcmd='"video-engine\mkvmerge.exe" -o ".\export\\' + title + '[' + heightp.strip() +'].mkv" --language 0:jpn --language 1:jpn -a 1 -d 0 ' + '".\export\\' + title + '.flv"' + subtitlefilecode +' --title "' + title +'"'
-    #        print mkvcmd
-            #print subtitlefilecode
-            subprocess.call(mkvcmd)
+                sublangc=sub_id5.pop(0)
+                sublangn=sub_id6.pop(0)
+
+                if onlymainsub and sublangc != sublang:
+                    continue
+
+                filename_subtitle = os.path.join("export", title+'['+sublangc+']'+sublangn+'.ass')
+                if not os.path.isfile(filename_subtitle):
+                    continue
+
+                cmd.extend(['--language', '0:' + sublangc.replace('spa_spa','spa')])
+
+                if sublangc == sublang:
+                    cmd.extend(['--default-track', '0:yes'])
+                else:
+                    cmd.extend(['--default-track', '0:no'])
+                if forcesub:
+                    cmd.extend(['--forced-track', '0:yes'])
+                else:
+                    cmd.extend(['--forced-track', '0:no'])
+
+                cmd.extend(['--track-name', '0:' + sublangn])
+                cmd.extend(['-s', '0'])
+                cmd.append(filename_subtitle)
+                subtitle_input.append(filename_subtitle)
+        subprocess.call(cmd)
         print 'Merge process complete'
         subs_only = False
 
@@ -323,12 +321,11 @@ Booting up...
 
     print 'Starting Final Cleanup'
     if not subs_only:
-        os.remove(os.path.join(os.getcwd(), 'export', '') + title + '.flv')
+        os.remove(video_input)
     if not hardcoded or not subs_only:
         #os.remove(os.path.join(os.getcwd(), 'export', '') + title + '.ass')
-        for root, dirs, files in os.walk('export'):
-            for file in filter(lambda x: re.match(title +'\[.+\]'+ '.ass', x), files):
-                os.remove(os.path.join(root, file))
+        for f in subtitle_input:
+            os.remove(f)
     print 'Cleanup Complete'
 
 # ----------

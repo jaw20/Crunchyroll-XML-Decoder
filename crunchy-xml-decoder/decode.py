@@ -8,7 +8,7 @@ Thanks!
 """
 
 # import lxml
-import os
+import os.path
 import re
 import shutil
 import sys
@@ -45,7 +45,7 @@ Booting up...
 
     #h = HTMLParser.HTMLParser()
     title = re.findall('<title>(.+?)</title>', html)[0].replace('Crunchyroll - Watch ', '')
-    if len(os.getcwd()+'\\export\\'+title+'.ass') > 255:
+    if len(os.path.join('export', title+'.ass') > 255:
         title = re.findall('^(.+?) \- ', title)[0]
 
     ### Taken from http://stackoverflow.com/questions/6116978/python-replace-multiple-strings ###
@@ -122,7 +122,7 @@ Booting up...
             xmlsub = altfuncs.getxml('RpcApiSubtitle_GetXml', i)
             formattedsubs = CrunchyDec().returnsubs(xmlsub)
             #subfile = open(eptitle + '.ass', 'wb')
-            subfile = open('.\\export\\'+title+'['+sub_id3.pop(0)+']'+sub_id4.pop(0)+'.ass', 'wb')
+            subfile = open(os.path.join('export', title+'['+sub_id3.pop(0)+']'+sub_id4.pop(0)+'.ass'), 'wb')
             subfile.write(formattedsubs.encode('utf-8-sig'))
             subfile.close()
         #shutil.move(title + '.ass', os.path.join(os.getcwd(), 'export', ''))
