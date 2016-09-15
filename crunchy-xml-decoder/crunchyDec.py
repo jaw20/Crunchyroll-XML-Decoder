@@ -10,7 +10,10 @@ class CrunchyDec:
         pass
 
     def returnsubs(self, xml):
-        _id, _iv, _data = self.strain(xml)
+        s = self.strain(xml)
+        if s is None:
+             return
+        _id, _iv, _data = s
         print "Attempting to decrypt subtitles..."
         decryptedsubs = self.decode(_id, _iv, _data)
 
