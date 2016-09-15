@@ -153,6 +153,8 @@ def subtitles(eptitle):
 			#xmlsub = altfuncs.getxml('RpcApiSubtitle_GetXml', sub_id)
 			xmlsub = altfuncs.getxml('RpcApiSubtitle_GetXml', i)
 			formattedsubs = CrunchyDec().returnsubs(xmlsub)
+			if formattedsubs is None:
+			    continue
 			#subfile = open(eptitle + '.ass', 'wb')
 			subfile = open('.\\export\\'+title+'['+sub_id3.pop(0)+']'+sub_id4.pop(0)+'.ass', 'wb')
 			subfile.write(formattedsubs.encode('utf-8-sig'))
