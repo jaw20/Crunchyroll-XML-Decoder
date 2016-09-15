@@ -19,6 +19,7 @@ import altfuncs
 from bs4 import BeautifulSoup
 from crunchyDec import CrunchyDec
 from unidecode import unidecode
+from hls import video_hls
 # ----------
 
 #onlymainsub=False
@@ -246,21 +247,20 @@ Booting up...
 
     # ----------
 
-    try:
-        host = xmlconfig.find('host').string
-    except AttributeError:
+    host = xmlconfig.find('host')
+    if host:
+        host = host.string
+
+    filen = xmlconfig.find('file')
+    if filen:
+        filen = filen.string
+
+    if not host and not filen:
         print 'Downloading 2 minute preview.'
         media_id = xmlconfig.find('media_id').string
         xmlconfig = BeautifulSoup(altfuncs.getxml('RpcApiVideoEncode_GetStreamInfo', media_id), 'xml')
         host = xmlconfig.find('host').string
 
-    if re.search('fplive\.net', host):
-        url1 = re.findall('.+/c[0-9]+', host).pop()
-        url2 = re.findall('c[0-9]+\?.+', host).pop()
-    else:
-        url1 = re.findall('.+/ondemand/', host).pop()
-        url2 = re.findall('ondemand/.+', host).pop()
-    filen = xmlconfig.find('file').string
 
     # ----------
     if 'subs' in sys.argv:
@@ -269,14 +269,25 @@ Booting up...
         hardcoded = True  # bleh
     else:
         page_url2 = page_url
-        video()
+        if host:
+            if re.search('fplive\.net', host):
+                url1 = re.findall('.+/c[0-9]+', host).pop()
+                url2 = re.findall('c[0-9]+\?.+', host).pop()
+            else:
+                url1 = re.findall('.+/ondemand/', host).pop()
+                url2 = re.findall('ondemand/.+', host).pop()
+            video()
+            video_input = os.path.join("export", title + '.flv')
+        else:
+            video_input = os.path.join("export", title + '.ts')
+            video_hls(filen, video_input)
+
         heightp = '360p' if xmlconfig.height.string == '368' else '{0}p'.format(xmlconfig.height.string)  # This is less likely to fail
         subtitles(title)
 
         print 'Starting mkv merge'
         mkvmerge = os.path.join("video-engine", "mkvmerge.exe")
         filename_output = os.path.join("export", title + '[' + heightp.strip() +'].mkv')
-        video_input = os.path.join("export", title + '.flv')
         subtitle_input = []
         cmd = [mkvmerge, "-o", filename_output, '--language', '0:jpn', '--language', '1:jpn', '-a', '1', '-d', '0', video_input, '--title', title]
         if os.name != 'nt':
