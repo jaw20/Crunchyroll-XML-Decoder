@@ -45,7 +45,7 @@ Booting up...
 
     #h = HTMLParser.HTMLParser()
     title = re.findall('<title>(.+?)</title>', html)[0].replace('Crunchyroll - Watch ', '')
-    if len(os.path.join('export', title+'.ass') > 255:
+    if len(os.path.join('export', title+'.ass')) > 255:
         title = re.findall('^(.+?) \- ', title)[0]
 
     ### Taken from http://stackoverflow.com/questions/6116978/python-replace-multiple-strings ###
