@@ -108,7 +108,7 @@ def subtitles(eptitle):
 				sub_id = re.findall("id=([0-9]+)' title='\["+re.escape(unidecode(lang2)), xmllist)[0]
 				lang = lang2
 			except IndexError:
-				lang ='[English (US)]'
+				lang ='English'
     sub_id3 = [word.replace('[English (US)]','eng') for word in sub_id3]
     sub_id3 = [word.replace('[Deutsch]','deu') for word in sub_id3]
     sub_id3 = [word.replace('[Portugues (Brasil)]','por') for word in sub_id3]
