@@ -289,8 +289,13 @@ Booting up...
         mkvmerge = os.path.join("video-engine", "mkvmerge.exe")
         filename_output = os.path.join("export", title + '[' + heightp.strip() +'].mkv')
         subtitle_input = []
+        if os.path.isfile(mkvmerge):
+            with_wine = os.name != 'nt'
+        else:
+            mkvmerge = "mkvmerge"
+            with_wine = False
         cmd = [mkvmerge, "-o", filename_output, '--language', '0:jpn', '--language', '1:jpn', '-a', '1', '-d', '0', video_input, '--title', title]
-        if os.name != 'nt':
+        if with_wine:
             cmd.insert(0, 'wine')
         if not hardcoded:
             sublang = {u'Español (Espana)': 'spa_spa', u'Français (France)': 'fre', u'Português (Brasil)': 'por',
