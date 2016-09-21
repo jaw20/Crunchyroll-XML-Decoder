@@ -1,8 +1,13 @@
 crunchy-xml-decoder
 ===================
 
-Requires PyCrypto (http://www.voidspace.org.uk/python/modules.shtml#pycrypto) and lxml (https://pypi.python.org/pypi/lxml/3.2.5)
-if crunchy-xml-decoder could automatically install PyCrypto and lxml use the above link to download manually 
+Requires Python modules:
+- PyCrypto (http://www.voidspace.org.uk/python/modules.shtml#pycrypto)
+- lxml (https://pypi.python.org/pypi/lxml/3.2.5)
+- m3u8 (https://pypi.python.org/pypi/m3u8/)
+
+crunchy-xml-decoder will try to install PyCrypto and lxml automatically,
+if they are missing. m3u8 can be installed using PIP.
 
 
 This is a composite of various scripts required to download video files from CrunchyRoll 
@@ -13,14 +18,15 @@ INSTRUCTIONS:
 
     Pre-Setup (Only need to do these once.):
     1.  Install Python 2.7.5.
-    2.  Run crunchy-xml-decoder.bat or crunchy-xml-decoder.py to generate necessary files (settings.ini and cookies)
-    3.  choices	from the option 
+    2.  Run pip install m3u8.
+    3.  Run crunchy-xml-decoder.bat or crunchy-xml-decoder.py to generate necessary files (settings.ini and cookies)
+    4.  choices	from the option 
 
     Per-Video Process:
     1.  Copy the URL of the CrunchyRoll video you want to download from your web browser
     2.  Run crunchy-xml-decoder.bat or crunchy-xml-decoder.py choice 1 and paste link
-    8.  Download will start automatically. Everything is automated.
-    11. Browse to the 'export' folder to view the completed file.
+    3.  Download will start automatically. Everything is automated.
+    4. Browse to the 'export' folder to view the completed file.
 
     SPECIAL NOTE: There is another batch file in the _run folder..
         Run crunchy-xml-decoder.bat or crunchy-xml-decoder.py choice 2 and paste link
@@ -31,8 +37,8 @@ WHAT IS THE POINT OF THIS SCRIPT? WHAT IS IT ACTUALLY DOING?:
 
     The process of getting a working download from CrunchyRoll is effectively doing the following:
         - Downloading and decrypting subtitles
-        - Downloading the video as FLV
-        - Splitting the FLV file into 264 video and aac audio
+        - Downloading the video as FLV or MPEG-TS
+        - Splitting the FLV/TS file into 264 video and aac audio
         - Merging video, audio, and subtitles into a mkv file
         - Naming the new video something other than 'video.mkv'
 

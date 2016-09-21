@@ -334,7 +334,7 @@ for i in mangalist:
         else:
             zipname = manga_name+' '+vol_num+' #'+cnum+'.cbz'
 
-        if os.path.exists(manga_name+'\\'+zipname):
+        if os.path.exists(os.path.join(manga_name, zipname)):
             continue
 
         # print 'WE GOT '+str(c['number'])+' (and high hopes)'
@@ -345,10 +345,10 @@ for i in mangalist:
 
         try:
             covername = manga_name+' '+vol_num+'.jpg'
-            if not os.path.exists(manga_name+'\\'+covername):
+            if not os.path.exists(os.path.join(manga_name, covername)):
                 cover = session.get(url=comic['volume']['encrypted_image_url']).content
                 open(covername, 'wb').write(decrypt(cover))
-                shutil.move(covername, manga_name+'\\'+covername)
+                shutil.move(covername, os.path.join(manga_name, covername))
         except TypeError:
             pass
 
@@ -378,4 +378,4 @@ for i in mangalist:
             # sleep(0.5)
         myzip.close()
 
-        shutil.move(zipname, manga_name+'\\'+zipname)
+        shutil.move(zipname, os.path.join(manga_name, zipname))
