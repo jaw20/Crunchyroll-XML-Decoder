@@ -282,7 +282,7 @@ def makechoise():
 2.- Download Subtitle only
 3.- Login
 4.- Login As Guest
-5.- Download an entire Anime with a queue
+5.- Download an entire Anime(Autocatch links)
 6.- Run Queue
 7.- Settings
 '''
