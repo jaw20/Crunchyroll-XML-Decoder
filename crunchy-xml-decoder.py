@@ -11,9 +11,28 @@ import ultimate
 import login
 import decode
 import altfuncs
+import re, urllib2
+from collections import deque
 
 import time
 
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#(autocatch)#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+def autocatch():
+    print 'indicate the url : '
+    url=raw_input()
+    mykey = urllib2.urlopen(url)
+    take = open("queue_.txt", "w")
+
+    for text in mykey:
+        match = re.search('<a href="/(.+?)" title=', text)
+        if match:
+            print >> take, 'http://www.crunchyroll.com/'+match.group(1)
+
+    take.close()
+
+    with open('queue_.txt') as f,  open('queue.txt', 'w') as fout:
+        fout.writelines(reversed(f.readlines()))
+    os.remove('queue_.txt')
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#(CHECKING)#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 if not os.path.exists("export"):
     os.makedirs("export")
@@ -31,26 +50,19 @@ def defaultsettings(vvquality, vlang1, vlang2, vforcesub, vforceusa, vlocalizeco
 # Note that any quality higher than 360p still requires premium, unless it's available that way for free (some first episodes).
 # We're not miracle workers.
 video_quality = '''+vvquality+'''
-
 # Set this to the desired subtitle language. If the subtitles aren't available in that language, it reverts to the second language option (below).
 # Available languages: English, Espanol, Espanol_Espana, Francais, Portugues, Turkce, Italiano, Arabic, Deutsch
 language = '''+vlang1+'''
-
 # If the first language isn't available, what language would you like as a backup? Only if then they aren't found, then it goes to English as default
 language2 = '''+vlang2+'''
-
 # Set this if you want to use --forced-track rather than --default-track for subtitle
 forcesubtitle = '''+str(vforcesub)+'''
-
 # Set this if you want to use a US session ID
 forceusa = '''+str(vforceusa)+'''
-
 # Set this if you want to Localize the cookies (this option is under testing and may generate some problem and it willnot work with -forceusa- option)
 localizecookies = '''+str(vlocalizecookies)+'''
-
 # Set this if you only want to mux one subtitle only (this so make easy for some devices like TVs to play subtitle)
 onlymainsub='''+str(onlymainsub)+'''
-
 '''
     open('.\\settings.ini', 'w').write(dsettings.encode('utf-8'))
 
@@ -157,7 +169,6 @@ def videoquality_():
 3.- 720p
 4.- 1080p
 5.- highest
-
 Note: Any Quality Higher Than 360p Still Requires Premium, Unless It's Available That Way For Free (Some First Episodes).
 We're Not Miracle Workers.
 '''
@@ -271,8 +282,9 @@ def makechoise():
 2.- Download Subtitle only
 3.- Login
 4.- Login As Guest
-5.- Run Queue
-6.- Settings
+5.- Download an entire Anime with a queue
+6.- Run Queue
+7.- Settings
 '''
     try:
         seleccion = int(input("> "))
@@ -299,11 +311,14 @@ def makechoise():
         login.login('', '')
         makechoise()
     elif seleccion == 5 :
+        autocatch()
         queueu('.\\queue.txt')
     elif seleccion == 6 :
+        queueu('.\\queue.txt')
+    elif seleccion == 7 :
         settings_()
         makechoise()
-    elif seleccion == 7 :
+    elif seleccion == 8 :
         import debug
     elif seleccion == 0 :
         sys.exit()
