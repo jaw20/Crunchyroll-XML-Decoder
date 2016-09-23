@@ -369,29 +369,6 @@ else:
     makechoise()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #print 'username'
 #print 'password'
 #print 'page_url'
