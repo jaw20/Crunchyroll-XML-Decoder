@@ -30,7 +30,7 @@ def video():
            '-r', url1, '-a', url2,
            '-f', 'WIN 11,8,800,50',
            '-m', '15',
-           '-W', 'http://static.ak.crunchyroll.com/versioned_assets/ChromelessPlayerApp.85e9525e.swf',
+           '-W', 'http://www.crunchyroll.com/vendor/ChromelessPlayerApp-c0d121b.swf',
            '-p', page_url2,
            '-y', filen,
            '-o', os.path.join('export', '{}.flv'.format(title))]
