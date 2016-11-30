@@ -60,13 +60,20 @@ class resumable_fetch:
         return "".join(buffer)
 
 def copy_with_decrypt(input, output, key):
-      iv = str(key.iv)[2:]
-      aes = AES.new(key.key_value, AES.MODE_CBC, iv.decode('hex'))
-      while True:
-          data = input.read(blocksize)
-          if not data:
-              break
-          output.write(aes.decrypt(data))
+    if key.iv is not None:
+        iv = str(key.iv)[2:]
+        aes = AES.new(key.key_value, AES.MODE_CBC, iv.decode('hex'))
+        encrypted = True
+    else:
+        encrypted = False
+    while True:
+        data = input.read(blocksize)
+        if not data:
+            break
+        if encrypted:
+            output.write(aes.decrypt(data))
+        else:
+            output.write(data)
 
 def fetch_streams(output, video):
     output = open(output, 'wb')
@@ -74,7 +81,10 @@ def fetch_streams(output, video):
         sys.stdout.write('\x1b[2K\r%d/%d' % (n + 1, len(video.segments)))
         sys.stdout.flush()
         raw = resumable_fetch(seg.uri, n+1, len(video.segments))
-        copy_with_decrypt(raw, output, video.key)
+        if hasattr(video, 'key'):
+           copy_with_decrypt(raw, output, video.key)
+        else:
+           copy_with_decrypt(raw, output, video.keys[0])
         size = output.tell()
         if size % 188 != 0:
             size = size // 188 * 188
@@ -83,8 +93,12 @@ def fetch_streams(output, video):
     print '\n'
 
 def fetch_encryption_key(video):
-    assert video.key.method == 'AES-128'
-    video.key.key_value = urllib2.urlopen(url = video.key.uri).read()
+    if hasattr(video, 'key'):
+        assert video.key.method == 'AES-128'
+        video.key.key_value = urllib2.urlopen(url = video.key.uri).read()
+    else:
+        assert video.keys[0].method == 'AES-128'
+        video.keys[0].key_value = urllib2.urlopen(url = video.keys[0].uri).read()
 
 def find_best_video(uri):
     playlist = m3u8.load(uri)
