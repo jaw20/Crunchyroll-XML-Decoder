@@ -17,7 +17,7 @@ that have been automated with a batch file.
 INSTRUCTIONS:
 
     Pre-Setup (Only need to do these once.):
-    1.  Install Python 2.7.5.
+    1.  Install Python 2.7.9.
     2.  Run pip install m3u8.
     3.  Run crunchy-xml-decoder.bat or crunchy-xml-decoder.py to generate necessary files (settings.ini and cookies)
     4.  choices	from the option 
