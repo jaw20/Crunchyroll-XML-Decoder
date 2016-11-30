@@ -60,13 +60,20 @@ class resumable_fetch:
         return "".join(buffer)
 
 def copy_with_decrypt(input, output, key):
-    iv = str(key.iv)[2:]
-    aes = AES.new(key.key_value, AES.MODE_CBC, iv.decode('hex'))
+    if key.iv is not None:
+        iv = str(key.iv)[2:]
+        aes = AES.new(key.key_value, AES.MODE_CBC, iv.decode('hex'))
+        encrypted = True
+    else:
+        encrypted = False
     while True:
         data = input.read(blocksize)
         if not data:
             break
-        output.write(aes.decrypt(data))
+        if encrypted:
+            output.write(aes.decrypt(data))
+        else:
+            output.write(data)
 
 def fetch_streams(output, video):
     output = open(output, 'wb')
