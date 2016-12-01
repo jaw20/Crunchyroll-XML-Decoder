@@ -59,21 +59,17 @@ class resumable_fetch:
                 self._restart()
         return "".join(buffer)
 
-def copy_with_decrypt(input, output, key):
+def copy_with_decrypt(input, output, key, media_sequence):
     if key.iv is not None:
         iv = str(key.iv)[2:]
-        aes = AES.new(key.key_value, AES.MODE_CBC, iv.decode('hex'))
-        encrypted = True
     else:
-        encrypted = False
+        iv = "%032x" % media_sequence
+    aes = AES.new(key.key_value, AES.MODE_CBC, iv.decode('hex'))
     while True:
         data = input.read(blocksize)
         if not data:
             break
-        if encrypted:
-            output.write(aes.decrypt(data))
-        else:
-            output.write(data)
+        output.write(aes.decrypt(data))
 
 def fetch_streams(output, video):
     output = open(output, 'wb')
@@ -82,9 +78,9 @@ def fetch_streams(output, video):
         sys.stdout.flush()
         raw = resumable_fetch(seg.uri, n+1, len(video.segments))
         if hasattr(video, 'key'):
-           copy_with_decrypt(raw, output, video.key)
+           copy_with_decrypt(raw, output, video.key, video.media_sequence + n)
         else:
-           copy_with_decrypt(raw, output, video.keys[0])
+           copy_with_decrypt(raw, output, video.keys[0], video.media_sequence + n)
         size = output.tell()
         if size % 188 != 0:
             size = size // 188 * 188
