@@ -31,7 +31,7 @@ def traceit(frame, event, arg):
         #line = linecache.getline(filename, lineno)
         #print "%s:%s: %s" % (name, lineno, line.rstrip())
         #print "%s: %s" % (lineno, debug_nice(frame.f_globals))
-        
+
         debugvalue = str("%s:%s: %s\n%s" % (name, lineno, line.rstrip(), debug_nice(frame.f_globals)))+'\n'
         #print debugvalue
         debugfile.write(debugvalue)
@@ -69,7 +69,7 @@ def debug_nice(locals_dict, keys=[]):
 sys.settrace(traceit)
 
 
-	
+
 
 ultimate.ultimate('', '', '')
 debugfile.close()

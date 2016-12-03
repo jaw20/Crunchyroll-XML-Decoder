@@ -10,7 +10,7 @@ crunchy-xml-decoder will try to install PyCrypto and lxml automatically,
 if they are missing. m3u8 can be installed using PIP.
 
 
-This is a composite of various scripts required to download video files from CrunchyRoll 
+This is a composite of various scripts required to download video files from CrunchyRoll
 that have been automated with a batch file.
 
 
@@ -20,7 +20,7 @@ INSTRUCTIONS:
     1.  Install Python 2.7.9.
     2.  Run pip install m3u8.
     3.  Run crunchy-xml-decoder.bat or crunchy-xml-decoder.py to generate necessary files (settings.ini and cookies)
-    4.  choices	from the option 
+    4.  choices from the option
 
     Per-Video Process:
     1.  Copy the URL of the CrunchyRoll video you want to download from your web browser
@@ -44,6 +44,7 @@ WHAT IS THE POINT OF THIS SCRIPT? WHAT IS IT ACTUALLY DOING?:
 
 
 NOTES FROM THE AUTHORS:
+
     From the DX author:
         Yeah, I wrote the basis for this "new 'n' improved version". Basically, I monitored the traffic
         to and from Crunchyroll while a video was loading, found a few (read: a lot of) similarities, and
@@ -51,7 +52,7 @@ NOTES FROM THE AUTHORS:
         dump the video (RTMPexplorer was doing the same thing basically).
 
     From the anonymous original author:
-        I did not write these programs, and I didn't even come up with this method. All I have done is 
-        created a few little bat files to bring them together. Original instructions on how this is 
-        done can be found here: 
+        I did not write these programs, and I didn't even come up with this method. All I have done is
+        created a few little bat files to bring them together. Original instructions on how this is
+        done can be found here:
         http://www.darkztar.com/forum/showthread.php?219034-Ripping-videos-amp-subtitles-from-Crunchyroll-%28noob-friendly%29

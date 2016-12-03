@@ -96,26 +96,26 @@ Booting up...
     sub_id3 = [word.replace('[l`rby@]','ara') for word in sub_id3]
     #sub_id4 = [word.replace('[l`rby@]',u'[العربية]') for word in sub_id4]
     sub_id4 = [word.replace('[l`rby@]',u'[Arabic]') for word in sub_id4]#else:
-    #	try:
-    #		sub_id = re.findall("id=([0-9]+)' title='\["+re.escape(unidecode(lang1)), xmllist)[0]
-    #		hardcoded = False
-    #		lang = lang1
-    #	except IndexError:
-    #		try:
-    #			sub_id = re.findall("id=([0-9]+)' title='\["+re.escape(unidecode(lang2)), xmllist)[0]
-    #			print 'Language not found, reverting to ' + lang2 + '.'
-    #			hardcoded = False
-    #			lang = lang2
-    #		except IndexError:
-    #			try:
-    #				sub_id = re.findall("id=([0-9]+)' title='\[English", xmllist)[0]  # default back to English
-    #				print 'Backup language not found, reverting to English.'
-    #				hardcoded = False
-    #				lang = 'English'
-    #			except IndexError:
-    #				print "The video's subtitles cannot be found, or are region-locked."
-    #				hardcoded = True
-    #				sub_id = False
+    #   try:
+    #       sub_id = re.findall("id=([0-9]+)' title='\["+re.escape(unidecode(lang1)), xmllist)[0]
+    #       hardcoded = False
+    #       lang = lang1
+    #   except IndexError:
+    #       try:
+    #           sub_id = re.findall("id=([0-9]+)' title='\["+re.escape(unidecode(lang2)), xmllist)[0]
+    #           print 'Language not found, reverting to ' + lang2 + '.'
+    #           hardcoded = False
+    #           lang = lang2
+    #       except IndexError:
+    #           try:
+    #               sub_id = re.findall("id=([0-9]+)' title='\[English", xmllist)[0]  # default back to English
+    #               print 'Backup language not found, reverting to English.'
+    #               hardcoded = False
+    #               lang = 'English'
+    #           except IndexError:
+    #               print "The video's subtitles cannot be found, or are region-locked."
+    #               hardcoded = True
+    #               sub_id = False
     if not hardcoded:
         for i in sub_id2:
             #xmlsub = altfuncs.getxml('RpcApiSubtitle_GetXml', sub_id)

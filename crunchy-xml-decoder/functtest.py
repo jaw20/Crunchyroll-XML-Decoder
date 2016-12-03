@@ -59,7 +59,7 @@ else:
 #        print('Function Error')
 try:
     from Crypto.Cipher import AES
-    print('Crypto installed')	
+    print('Crypto installed')
 except ImportError:
     print('Crypto not installed')
     try:
