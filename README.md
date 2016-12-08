@@ -1,5 +1,6 @@
 crunchy-xml-decoder
 ===================
+ORIGINALLY BY @einstein95
 
 Requires Python modules:
 - PyCrypto (http://www.voidspace.org.uk/python/modules.shtml#pycrypto)
