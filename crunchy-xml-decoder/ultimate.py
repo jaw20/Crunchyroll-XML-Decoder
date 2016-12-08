@@ -1,4 +1,4 @@
-﻿#!/usr/bin/python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 """
 Crunchyroll Export Script DX - Last Updated 2014/07/16
@@ -152,21 +152,31 @@ def subtitles(eptitle):
 #                    sub_id = False
 
     if not hardcoded:
-		for i in sub_id2:
-			#xmlsub = altfuncs.getxml('RpcApiSubtitle_GetXml', sub_id)
-			xmlsub = altfuncs.getxml('RpcApiSubtitle_GetXml', i)
-			formattedsubs = CrunchyDec().returnsubs(xmlsub)
-			if formattedsubs is None:
-			    continue
-			#subfile = open(eptitle + '.ass', 'wb')
-			subfile = open(os.path.join('export', title+'['+sub_id3.pop(0)+']'+sub_id4.pop(0)+'.ass'), 'wb')
+        
+        sublang = {u'Español (Espana)': 'spa_spa', u'Français (France)': 'fre', u'Português (Brasil)': 'por',
+                   u'English': 'eng', u'Español': 'spa', u'Türkçe': 'tur', u'Italiano': 'ita',
+                   u'العربية': 'ara', u'Deutsch': 'deu'}[lang]
+
+        for i in sub_id2:
+            sublangc = sub_id3.pop(0)
+            sublangn = sub_id4.pop(0)
+            if onlymainsub and sublangc != sublang:
+                continue
+            
+	    #xmlsub = altfuncs.getxml('RpcApiSubtitle_GetXml', sub_id)
+	    xmlsub = altfuncs.getxml('RpcApiSubtitle_GetXml', i)
+	    formattedsubs = CrunchyDec().returnsubs(xmlsub)
+	    if formattedsubs is None:
+		continue
+	    #subfile = open(eptitle + '.ass', 'wb')
+	    subfile = open(os.path.join('export', title + '['+ sublangc + ']' + sublangn + '.ass'), 'wb')
 			subfile.write(formattedsubs.encode('utf-8-sig'))
 			subfile.close()		
 			#shutil.move(eptitle + '.ass', os.path.join(os.getcwd(), 'export', ''))
 # ----------
 
 def ultimate(page_url, seasonnum, epnum):
-    global url1, url2, filen, title, media_id, lang1, lang2, hardcoded, forceusa, page_url2
+    global url1, url2, filen, title, media_id, lang1, lang2, hardcoded, forceusa, page_url2, onlymainsub
     #global player_revision
 
     print '''
