@@ -31,7 +31,7 @@ class resumable_fetch:
             req.headers['Range'] = 'bytes=%s-' % (self.offset, )
         while True:
             try:
-                self.stream = urllib2.urlopen(req, timeout = 30)
+                self.stream = urllib2.urlopen(req, timeout = 180)
                 break
             except socket.timeout:
                 continue
