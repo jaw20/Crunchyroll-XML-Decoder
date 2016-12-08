@@ -82,33 +82,33 @@ def subtitles(eptitle):
         hardcoded = True
         sub_id = False
     else:
-        try:
-            sub_id2 = re.findall("id=([0-9]+)", xmllist)
-            sub_id3 = re.findall("title='(\[.+\]) ", xmllist)
-            sub_id4 = re.findall("title='(\[.+\]) ", xmllist)
-            sub_id5 = re.findall("title='(\[.+\]) ", xmllist)
-            sub_id6 = re.findall("title='(\[.+\]) ", xmllist)
-            hardcoded = False
-#           try:
-#               sub_id = re.findall("id=([0-9]+)' title='\["+re.escape(unidecode(lang1)), xmllist)[0]
-#               lang = lang1
-#           except IndexError:
-#               try:
-#                   sub_id = re.findall("id=([0-9]+)' title='\["+re.escape(unidecode(lang2)), xmllist)[0]
-#                   lang = lang2
-        except IndexError:
-            print "The video's subtitles cannot be found, or are region-locked."
-            hardcoded = True
-            sub_id = False
-        try:
-            sub_id = re.findall("id=([0-9]+)' title='\["+re.escape(unidecode(lang1)), xmllist)[0]
-            lang = lang1
-        except IndexError:
-            try:
-                sub_id = re.findall("id=([0-9]+)' title='\["+re.escape(unidecode(lang2)), xmllist)[0]
-                lang = lang2
-            except IndexError:
-                lang ='English'
+		try:
+			sub_id2 = re.findall("id=([0-9]+)", xmllist)
+			sub_id3 = re.findall("title='(\[.+\]) ", xmllist)
+			sub_id4 = re.findall("title='(\[.+\]) ", xmllist)
+			sub_id5 = re.findall("title='(\[.+\]) ", xmllist)
+			sub_id6 = re.findall("title='(\[.+\]) ", xmllist)
+			hardcoded = False
+#			try:
+#				sub_id = re.findall("id=([0-9]+)' title='\["+re.escape(unidecode(lang1)), xmllist)[0]
+#				lang = lang1
+#			except IndexError:
+#				try:
+#					sub_id = re.findall("id=([0-9]+)' title='\["+re.escape(unidecode(lang2)), xmllist)[0]
+#					lang = lang2
+		except IndexError:
+			print "The video's subtitles cannot be found, or are region-locked."
+			hardcoded = True
+			sub_id = False
+		try:
+			sub_id = re.findall("id=([0-9]+)' title='\["+re.escape(unidecode(lang1)), xmllist)[0]
+			lang = lang1
+		except IndexError:
+			try:
+				sub_id = re.findall("id=([0-9]+)' title='\["+re.escape(unidecode(lang2)), xmllist)[0]
+				lang = lang2
+			except IndexError:
+				lang ='English'
     sub_id3 = [word.replace('[English (US)]','eng') for word in sub_id3]
     sub_id3 = [word.replace('[Deutsch]','deu') for word in sub_id3]
     sub_id3 = [word.replace('[Portugues (Brasil)]','por') for word in sub_id3]
@@ -152,30 +152,21 @@ def subtitles(eptitle):
 #                    sub_id = False
 
     if not hardcoded:
-        sublang = {u'Español (Espana)': 'spa_spa', u'Français (France)': 'fre', u'Português (Brasil)': 'por',
-                   u'English': 'eng', u'Español': 'spa', u'Türkçe': 'tur', u'Italiano': 'ita',
-                   u'العربية': 'ara', u'Deutsch': 'deu'}[lang]
-
-        for i in sub_id2:
-            sublangc = sub_id3.pop(0)
-            sublangn = sub_id4.pop(0)
-            if onlymainsub and sublangc != sublang:
-                continue
-
-            #xmlsub = altfuncs.getxml('RpcApiSubtitle_GetXml', sub_id)
-            xmlsub = altfuncs.getxml('RpcApiSubtitle_GetXml', i)
-            formattedsubs = CrunchyDec().returnsubs(xmlsub)
-            if formattedsubs is None:
-                continue
-            #subfile = open(eptitle + '.ass', 'wb')
-            subfile = open(os.path.join('export', title + '[' + sublangc + ']' + sublangn + '.ass'), 'wb')
-            subfile.write(formattedsubs.encode('utf-8-sig'))
-            subfile.close()
-            #shutil.move(eptitle + '.ass', os.path.join(os.getcwd(), 'export', ''))
+		for i in sub_id2:
+			#xmlsub = altfuncs.getxml('RpcApiSubtitle_GetXml', sub_id)
+			xmlsub = altfuncs.getxml('RpcApiSubtitle_GetXml', i)
+			formattedsubs = CrunchyDec().returnsubs(xmlsub)
+			if formattedsubs is None:
+			    continue
+			#subfile = open(eptitle + '.ass', 'wb')
+			subfile = open(os.path.join('export', title+'['+sub_id3.pop(0)+']'+sub_id4.pop(0)+'.ass'), 'wb')
+			subfile.write(formattedsubs.encode('utf-8-sig'))
+			subfile.close()		
+			#shutil.move(eptitle + '.ass', os.path.join(os.getcwd(), 'export', ''))
 # ----------
 
 def ultimate(page_url, seasonnum, epnum):
-    global url1, url2, filen, title, media_id, lang1, lang2, hardcoded, forceusa, page_url2, onlymainsub
+    global url1, url2, filen, title, media_id, lang1, lang2, hardcoded, forceusa, page_url2
     #global player_revision
 
     print '''
@@ -194,7 +185,7 @@ Booting up...
 '''
     if page_url == '':
         page_url = raw_input('Please enter Crunchyroll video URL:\n')
-
+	
     try:
         int(page_url)
         page_url = 'http://www.crunchyroll.com/media-' + page_url
@@ -228,7 +219,7 @@ Booting up...
 
     # title = h.unescape(unidecode(title)).replace('/', ' - ').replace(':', '-').
     # replace('?', '.').replace('"', "''").replace('|', '-').replace('&quot;',"''").strip()
-
+    
     ### Taken from http://stackoverflow.com/questions/6116978/python-replace-multiple-strings ###
     rep = {' / ': ' - ', '/': ' - ', ':': '-', '?': '.', '"': "''", '|': '-', '&quot;': "''", 'a*G':'a G', '*': '#', u'\u2026': '...'}
 
@@ -252,18 +243,24 @@ Booting up...
     except IndexError:
         pass
 
+    vid_id = xmlconfig.find('media_id').string
+
     # ----------
 
-    host = xmlconfig.host and xmlconfig.host.string
-    filen = xmlconfig.file and xmlconfig.file.string
+    host = xmlconfig.find('host')
+    if host:
+        host = host.string
 
-    if not (host or filen):
+    filen = xmlconfig.find('file')
+    if filen:
+        filen = filen.string
+
+    if not host and not filen:
         print 'Downloading 2 minute preview.'
+        media_id = xmlconfig.find('media_id').string
+        xmlconfig = BeautifulSoup(altfuncs.getxml('RpcApiVideoEncode_GetStreamInfo', media_id), 'xml')
+        host = xmlconfig.find('host').string
 
-    media_id = xmlconfig.media_id.string
-    xmlconfig = BeautifulSoup(altfuncs.getxml('RpcApiVideoEncode_GetStreamInfo', media_id), 'xml')
-    host = xmlconfig.host.string
-    filen = xmlconfig.file.string
 
     # ----------
     if 'subs' in sys.argv:

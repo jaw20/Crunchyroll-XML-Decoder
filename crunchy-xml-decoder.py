@@ -68,7 +68,7 @@ onlymainsub='''+str(onlymainsub)+'''
 
 if not os.path.exists(".\\settings.ini"):
     defaultsettings(iquality, ilang1, ilang2, iforcesub, iforceusa, ilocalizecookies, ionlymainsub)
-
+	
 if not os.path.exists(".\\cookies"):
     if raw_input(u'Do you have an account [Y/N]?').lower() == 'y':
         username = raw_input(u'Username: ')
@@ -214,10 +214,10 @@ def settings_():
 1.- Video Quality = '''+vquality+'''
 2.- Primary Language = '''+slang1_+'''
 3.- Secondary Language = '''+slang2_+'''
-4.- Force Subtitle = '''+str(sforcesub)+'''     #Use --forced-track in Subtitle
-5.- USA Proxy = '''+str(sforceusa)+'''          #use a US session ID
-6.- Localize cookies = '''+str(slocalizecookies)+'''        #Localize the cookies (Experiment)
-7.- Only One Subtitle = '''+str(vonlymainsub)+'''       #Only download Primary Language
+4.- Force Subtitle = '''+str(sforcesub)+'''		#Use --forced-track in Subtitle
+5.- USA Proxy = '''+str(sforceusa)+'''			#use a US session ID
+6.- Localize cookies = '''+str(slocalizecookies)+'''		#Localize the cookies (Experiment)
+7.- Only One Subtitle = '''+str(vonlymainsub)+'''		#Only download Primary Language
 8.- Restore Default Settings
 '''
     try:
@@ -278,7 +278,7 @@ def makechoise():
     seleccion = 0
     print '''Options:
 0.- Exit
-1.- Download Anime
+1.- Download Anime 
 2.- Download Subtitle only
 3.- Login
 4.- Login As Guest

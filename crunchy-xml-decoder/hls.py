@@ -22,7 +22,7 @@ class resumable_fetch:
             sys.exit()
 
     def _progress(self):
-        sys.stdout.write('\r%d/%d' % (self.cur, self.total))
+        sys.stdout.write('\x1b[2K\r%d/%d' % (self.cur, self.total))
         sys.stdout.flush()
 
     def _restart(self):
@@ -74,7 +74,7 @@ def copy_with_decrypt(input, output, key, media_sequence):
 def fetch_streams(output, video):
     output = open(output, 'wb')
     for n, seg in enumerate(video.segments):
-        sys.stdout.write('\r%d/%d' % (n + 1, len(video.segments)))
+        sys.stdout.write('\x1b[2K\r%d/%d' % (n + 1, len(video.segments)))
         sys.stdout.flush()
         raw = resumable_fetch(seg.uri, n+1, len(video.segments))
         if hasattr(video, 'key'):
