@@ -170,8 +170,8 @@ def subtitles(eptitle):
 		continue
 	    #subfile = open(eptitle + '.ass', 'wb')
 	    subfile = open(os.path.join('export', title + '['+ sublangc + ']' + sublangn + '.ass'), 'wb')
-			subfile.write(formattedsubs.encode('utf-8-sig'))
-			subfile.close()		
+	subfile.write(formattedsubs.encode('utf-8-sig'))
+	subfile.close()
 			#shutil.move(eptitle + '.ass', os.path.join(os.getcwd(), 'export', ''))
 # ----------
 
