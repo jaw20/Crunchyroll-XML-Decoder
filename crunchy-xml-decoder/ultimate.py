@@ -168,11 +168,11 @@ def subtitles(eptitle):
 	    formattedsubs = CrunchyDec().returnsubs(xmlsub)
 	    if formattedsubs is None:
 		continue
-	    #subfile = open(eptitle + '.ass', 'wb')
-	    subfile = open(os.path.join('export', title + '['+ sublangc + ']' + sublangn + '.ass'), 'wb')
+	    #subfile = open(eptitle + '.###', 'wb')
+	    subfile = open(os.path.join('export', title + '['+ sublangc + ']' + sublangn + '.###'), 'wb')
 	subfile.write(formattedsubs.encode('utf-8-sig'))
 	subfile.close()
-			#shutil.move(eptitle + '.ass', os.path.join(os.getcwd(), 'export', ''))
+			#shutil.move(eptitle + '.###', os.path.join(os.getcwd(), 'export', ''))
 # ----------
 
 def ultimate(page_url, seasonnum, epnum):
@@ -184,11 +184,11 @@ def ultimate(page_url, seasonnum, epnum):
 ---- Start New Export ----
 --------------------------
 
-CrunchyRoll Downloader Toolkit DX v0.98
+CrunchyRoll Downloader Toolkit DX v0.98b 
 
 Crunchyroll hasn't changed anything.
 
-If you don't have a premium account, go and sign up for one now. It's well worthit, and supports the animators.
+If you don't have a premium account, go and sign up for one now. It's well worth it, and supports the animators.
 
 ----------
 Booting up...
@@ -318,7 +318,7 @@ Booting up...
                 if onlymainsub and sublangc != sublang:
                     continue
 
-                filename_subtitle = os.path.join("export", title+'['+sublangc+']'+sublangn+'.ass')
+                filename_subtitle = os.path.join("export", title+'['+sublangc+']'+sublangn+'.###')
                 if not os.path.isfile(filename_subtitle):
                     continue
 
@@ -349,7 +349,7 @@ Booting up...
     if not subs_only:
         os.remove(video_input)
     if not hardcoded or not subs_only:
-        #os.remove(os.path.join(os.getcwd(), 'export', '') + title + '.ass')
+        #os.remove(os.path.join(os.getcwd(), 'export', '') + title + '.###')
         for f in subtitle_input:
             os.remove(f)
     print 'Cleanup Complete'
