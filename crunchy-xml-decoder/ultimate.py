@@ -230,8 +230,8 @@ Booting up...
     # title = h.unescape(unidecode(title)).replace('/', ' - ').replace(':', '-').
     # replace('?', '.').replace('"', "''").replace('|', '-').replace('&quot;',"''").strip()
     
-    ### Taken from http://stackoverflow.com/questions/6116978/python-replace-multiple-strings ###
-    rep = {' / ': ' - ', '/': ' - ', ':': '-', '?': '.', '"': "''", '|': '-', '&quot;': "''", 'a*G':'a G', '*': '#', u'\u2026': '...'}
+    ### Taken from http://stackoverflow.com/questions/6116978/python-replace-multiple-strings and imrpoved to include the backslash###
+    rep = {' / ': ' - ', '/': ' - ', ':': '-', '?': '.', '"': "''", '|': '-', '&quot;': "''", 'a*G':'a G', '*': '#', u'\u2026': '...', ' \ ': ' - '}
 
     rep = dict((re.escape(k), v) for k, v in rep.iteritems())
     pattern = re.compile("|".join(rep.keys()))
