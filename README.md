@@ -6,9 +6,10 @@ Requires Python modules:
 - PyCrypto (http://www.voidspace.org.uk/python/modules.shtml#pycrypto)
 - lxml (https://pypi.python.org/pypi/lxml/3.2.5)
 - m3u8 (https://pypi.python.org/pypi/m3u8/)
+- cfscrape (https://pypi.python.org/pypi/cfscrape/)
 
 crunchy-xml-decoder will try to install PyCrypto and lxml automatically,
-if they are missing. m3u8 can be installed using PIP.
+if they are missing. m3u8 and crscrape can be installed using PIP.
 
 
 This is a composite of various scripts required to download video files from CrunchyRoll 
