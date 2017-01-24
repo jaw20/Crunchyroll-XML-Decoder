@@ -2,13 +2,14 @@ import sys
 import re
 import requests
 import pickle
+import cfscrape
 from getpass import getpass
 
 def getuserstatus(session=''):
     status = 'Guest'
     user1 = 'Guest'
     if session == '':
-        session = requests.session()
+        session = cfscrape.create_scraper()
         with open('cookies') as f:
             cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
             session = requests.session()
@@ -32,7 +33,7 @@ def getuserstatus(session=''):
 def login(username, password):
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0',
                'Connection': 'keep-alive'}
-    session = requests.session()
+    session = cfscrape.create_scraper()
     res_get = session.get('https://www.crunchyroll.com/login', headers=headers)
 
     s = re.search('name="login_form\\[_token\\]" value="([^"]*)"', res_get.text)
@@ -64,7 +65,7 @@ def login(username, password):
         print 'Login as '+userstatus[0]+' successfully.'
         pickle.dump(requests.utils.dict_from_cookiejar(session.cookies), open('cookies', 'w'))
         with open('cookies', 'w') as f:
-            pickle.dump(requests.utils.dict_from_cookiejar(session.cookies), f)	
+            pickle.dump(requests.utils.dict_from_cookiejar(session.cookies), f)
 
 if __name__ == '__main__':
     try:

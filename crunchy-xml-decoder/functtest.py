@@ -1,6 +1,7 @@
 import sys
 import os
 import re
+import pip
 import platform
 import subprocess
 import shutil
@@ -85,6 +86,17 @@ except ImportError:
             lxml_link_="Something Has Gone Wrong While Retrieving Lxml link\nPlease Download Lxml Manually"
     except KeyError:
         print "Something Has Gone Wrong While Retrieving Lxml link\nPlease Download Lxml Manually"
+try:
+    from cfscrape import create_scraper
+    print('Cfscrape installed')
+except ImportError:
+    print 'Installing Cfscrape...',
+    try:
+        if python_bit_=="32 bit" or python_bit_=="64 bit":
+            pip.main(['install', '--quiet', 'cfscrape'])
+            print "Installed"
+	except KeyError:
+		print "Something Has Gone Wrong While Retrieving Cfscrape link\nPlease Download Cfscrape Manually"
 
 if Crypto_link_ or lxml_link_:
     if not os.path.exists("temp"):
@@ -109,4 +121,3 @@ if os.path.exists("temp"):
     if os.path.exists(".\\temp\\PLATLIB\\lxml"):
         shutil.move('.\\temp\\PLATLIB\\lxml' , bin_dir__ + '\\crunchy-xml-decoder\\')
     shutil.rmtree("temp")
-
