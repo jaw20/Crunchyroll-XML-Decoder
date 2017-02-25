@@ -170,9 +170,9 @@ def subtitles(eptitle):
 		continue
 	    #subfile = open(eptitle + '.###', 'wb')
 	    subfile = open(os.path.join('export', title + '['+ sublangc + ']' + sublangn + '.###'), 'wb')
-	subfile.write(formattedsubs.encode('utf-8-sig'))
-	subfile.close()
-			#shutil.move(eptitle + '.###', os.path.join(os.getcwd(), 'export', ''))
+            subfile.write(formattedsubs.encode('utf-8-sig'))
+            subfile.close()
+        #shutil.move(eptitle + '.###', os.path.join(os.getcwd(), 'export', ''))
 # ----------
 
 def ultimate(page_url, seasonnum, epnum):
