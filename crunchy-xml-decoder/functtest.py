@@ -60,7 +60,7 @@ else:
 #        print('Function Error')
 try:
     from Crypto.Cipher import AES
-    print('Crypto installed')	
+    print('Crypto installed')
 except ImportError:
     print('Crypto not installed')
     try:
@@ -95,8 +95,8 @@ except ImportError:
         if python_bit_=="32 bit" or python_bit_=="64 bit":
             pip.main(['install', '--quiet', 'cfscrape'])
             print "Installed"
-	except KeyError:
-		print "Something Has Gone Wrong While Retrieving Cfscrape link\nPlease Download Cfscrape Manually"
+    except KeyError:
+        print "Something Has Gone Wrong While Retrieving Cfscrape link\nPlease Download Cfscrape Manually"
 
 if Crypto_link_ or lxml_link_:
     if not os.path.exists("temp"):
