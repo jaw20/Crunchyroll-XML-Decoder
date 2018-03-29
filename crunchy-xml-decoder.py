@@ -51,7 +51,7 @@ def defaultsettings(vvquality, vlang1, vlang2, vforcesub, vforceusa, vlocalizeco
 # We're not miracle workers.
 video_quality = '''+vvquality+'''
 # Set this to the desired subtitle language. If the subtitles aren't available in that language, it reverts to the second language option (below).
-# Available languages: English, Espanol, Espanol_Espana, Francais, Portugues, Turkce, Italiano, Arabic, Deutsch
+# Available languages: English, Espanol, Espanol_Espana, Francais, Portugues, Turkce, Italiano, Arabic, Deutsch, Russian
 language = '''+vlang1+'''
 # If the first language isn't available, what language would you like as a backup? Only if then they aren't found, then it goes to English as default
 language2 = '''+vlang2+'''
