@@ -109,6 +109,7 @@ def subtitles(eptitle):
 				lang = lang2
 			except IndexError:
 				lang ='English'
+    sub_id3 = [word.replace('[Russkii]','rus') for word in sub_id3]
     sub_id3 = [word.replace('[English (US)]','eng') for word in sub_id3]
     sub_id3 = [word.replace('[Deutsch]','deu') for word in sub_id3]
     sub_id3 = [word.replace('[Portugues (Brasil)]','por') for word in sub_id3]
@@ -119,6 +120,7 @@ def subtitles(eptitle):
     sub_id3 = [word.replace('[l`rby@]','ara') for word in sub_id3]
 #    sub_id4 = [word.replace('[l`rby@]',u'[العربية]') for word in sub_id4]
     sub_id4 = [word.replace('[l`rby@]',u'[Arabic]') for word in sub_id4]
+    sub_id5 = [word.replace('[Russkii]','rus') for word in sub_id5]
     sub_id5 = [word.replace('[English (US)]','eng') for word in sub_id5]
     sub_id5 = [word.replace('[Deutsch]','deu') for word in sub_id5]
     sub_id5 = [word.replace('[Portugues (Brasil)]','por') for word in sub_id5]
@@ -155,7 +157,7 @@ def subtitles(eptitle):
         
         sublang = {u'Español (Espana)': 'spa_spa', u'Français (France)': 'fre', u'Português (Brasil)': 'por',
                    u'English': 'eng', u'Español': 'spa', u'Türkçe': 'tur', u'Italiano': 'ita',
-                   u'العربية': 'ara', u'Deutsch': 'deu'}[lang]
+                   u'العربية': 'ara', u'Deutsch': 'deu', u'Russian': 'rus'}[lang]
 
         for i in sub_id2:
             sublangc = sub_id3.pop(0)
